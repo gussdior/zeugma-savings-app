@@ -5,3 +5,7 @@ desktop.ini
 
 # Local Claude Code editor config (machine-specific, not part of the app)
 .claude/
+
+# Brainstorming + preview scratch (not part of the app)
+.superpowers/
+.playwright-mcp/
