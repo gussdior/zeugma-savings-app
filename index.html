@@ -143,7 +143,8 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
 .hero-eyebrow::before,.hero-eyebrow::after{content:""; height:1px; flex:1; max-width:120px; background:#d8c4a0;}
 .hero-main{text-align:center;}
 .hero-main .row{display:flex; align-items:center; justify-content:center; gap:18px;}
-.hero-num{font-family:var(--serif); font-size:clamp(64px,10.5vw,128px); font-weight:800; color:var(--coral); line-height:.9; letter-spacing:-2px;}
+.hero-num{font-family:var(--serif); font-size:clamp(64px,10.5vw,128px); font-weight:800; color:var(--coral); line-height:.9; letter-spacing:-2px; display:inline-flex; align-items:baseline;}
+.hero-num .cur{font-size:.46em; font-weight:600; margin-right:.06em; letter-spacing:0;}
 .hero-tot{text-align:left; font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--muted); line-height:1.3;}
 .hero-pill{display:inline-block; margin-top:12px; background:#fff; border:1px solid var(--line); border-radius:30px; padding:9px 20px; font-size:clamp(13px,1.4vw,16px); color:var(--ink); box-shadow:var(--shadow-sm);}
 .hero-pill b{color:var(--coral); font-weight:700;}
@@ -325,6 +326,7 @@ const LEGACY_KEY = "zeugma_prices";
 const MIN_SESS = 3, MAX_SESS = 12;
 
 const usd = n => "$" + Math.round(n).toLocaleString("en-US");
+const comma = n => Math.round(n).toLocaleString("en-US");
 const rateFor = q => q>=6 ? 0.15 : (q>=2 ? 0.10 : 0);
 const num = v => { const n = parseInt(v,10); return (isNaN(n)||n<0) ? 0 : n; };
 const clampSess = n => Math.min(MAX_SESS, Math.max(MIN_SESS, n||6));
@@ -550,7 +552,7 @@ function buildRight(s){
   document.getElementById("right").innerHTML = `
     <div class="hero-eyebrow reveal d1">Your personalized savings</div>
     <div class="hero-main reveal d2">
-      <div class="row"><span class="hero-num" id="heroNum">$0</span><span class="hero-tot">Total<br>savings</span></div>
+      <div class="row"><span class="hero-num"><span class="cur">$</span><span id="heroNum">0</span></span><span class="hero-tot">Total<br>savings</span></div>
       <div class="hero-pill" id="heroPill"></div>
     </div>
     <div class="compare reveal d3">
@@ -612,13 +614,14 @@ function buildLadder(s){
 
 // ---- count up ----
 let animRAF=null;
-function animateNum(el,to){
+function animateNum(el,to,fmt){
+  fmt = fmt || usd;
   cancelAnimationFrame(animRAF);
   const from = parseInt((el.textContent||"0").replace(/[^0-9]/g,""))||0;
   const start=performance.now(), dur=520;
   (function step(now){
     const p=Math.min((now-start)/dur,1), e=1-Math.pow(1-p,3);
-    el.textContent = usd(from+(to-from)*e);
+    el.textContent = fmt(from+(to-from)*e);
     if(p<1) animRAF=requestAnimationFrame(step);
   })(performance.now());
 }
@@ -636,7 +639,7 @@ function update(){
   // hero
   const heroNum=document.getElementById("heroNum"), heroPill=document.getElementById("heroPill");
   if(c.totalSave>0){
-    animateNum(heroNum, c.totalSave);
+    animateNum(heroNum, c.totalSave, comma);
     if(c.hasPromo && c.packageSave>0){
       heroPill.innerHTML = '<b>'+usd(c.promoSave)+'</b> off the regular price<span class="plus">+</span><b>'+usd(c.packageSave)+'</b> in package savings';
     }else if(c.hasPromo){
@@ -645,7 +648,7 @@ function update(){
       heroPill.innerHTML = '<b>'+(c.rate*100)+'%</b> off when you book '+q+' sessions';
     }
   }else{
-    heroNum.textContent = usd(c.perSession);
+    heroNum.textContent = comma(c.perSession);
     heroPill.innerHTML = 'Add a session to unlock package savings';
   }
 
@@ -672,7 +675,7 @@ function update(){
 function selectService(s){
   current=s; sessions=s.maxSessions;
   buildLeft(s); buildRight(s);
-  document.getElementById("heroNum").textContent="$0";
+  document.getElementById("heroNum").textContent="0";
   requestAnimationFrame(()=>update());
 }
 
