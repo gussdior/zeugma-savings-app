@@ -7,161 +7,333 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Zeugma · Package Savings</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --olive:#4A3C0E; --brown:#3D3416; --sand:#E5DFD2; --cream:#EFEAE0;
-  --coral:#C0664A; --sage:#E2EAD9; --sage-ink:#51662f; --ink:#3A3320; --muted:#8a7f63;
+  --coral:#C0664A; --coral-deep:#a8543c; --sage:#E2EAD9; --sage-ink:#51662f;
+  --ink:#3A3320; --muted:#8a7f63; --line:#ddd0b6;
+  --shadow:0 18px 40px -18px rgba(61,52,22,.45);
+  --shadow-sm:0 8px 22px -12px rgba(61,52,22,.35);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
-body{font-family:'Poppins',sans-serif; background:var(--sand); color:var(--ink); overflow:hidden; -webkit-user-select:none;}
-.screen{height:100vh; display:none; flex-direction:column;}
+body{
+  font-family:'Poppins',sans-serif; color:var(--ink); overflow:hidden; -webkit-user-select:none;
+  background:
+    radial-gradient(1200px 700px at 78% 18%, #f3eee2 0%, rgba(243,238,226,0) 60%),
+    radial-gradient(900px 600px at 12% 92%, #ece4d3 0%, rgba(236,228,211,0) 55%),
+    var(--sand);
+}
+/* subtle paper grain */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+.screen{position:relative; z-index:1; height:100vh; display:none; flex-direction:column;}
 .screen.active{display:flex;}
 
+/* ---------- ROTATE PROMPT (portrait) ---------- */
+#rotate{
+  display:none; position:fixed; inset:0; z-index:9999; background:var(--olive); color:#efe7d2;
+  flex-direction:column; align-items:center; justify-content:center; gap:22px; text-align:center; padding:40px;
+}
+#rotate .icon{width:74px; height:50px; border:3px solid #d8c9a8; border-radius:9px; position:relative; animation:rock 2.4s ease-in-out infinite; transform-origin:50% 50%;}
+#rotate .icon::after{content:""; position:absolute; top:50%; left:50%; width:6px; height:6px; border-radius:50%; background:#d8c9a8; transform:translate(-50%,-50%);}
+#rotate .t{font-size:22px; font-weight:600; letter-spacing:.5px;}
+#rotate .s{font-size:14px; color:#bcae8c; max-width:320px; line-height:1.5;}
+@keyframes rock{0%,100%{transform:rotate(0)}45%,55%{transform:rotate(90deg)}}
+@media (orientation:portrait){#rotate{display:flex;}}
+
 /* ---------- DASHBOARD ---------- */
-.dash-head{background:var(--olive); color:#efe7d2; padding:18px 30px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center;}
-.dash-head .b{font-size:18px; font-weight:600; letter-spacing:4px;}
-.dash-head .s{font-size:10px; letter-spacing:2px; color:#bcae8c;}
-.dash-head .hint{font-size:13px; color:#d8c9a8;}
-.dash-body{flex:1; overflow-y:auto; padding:24px 30px;}
-.dash-title{font-size:15px; color:var(--muted); margin-bottom:16px; font-weight:500;}
-.svc-row{background:#fff; border:1px solid #e2d8c2; border-radius:16px; padding:18px 22px; margin-bottom:14px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
-.svc-name{flex:1 1 160px; font-size:19px; font-weight:600; color:var(--brown);}
-.price-field{display:flex; flex-direction:column; gap:4px;}
-.price-field label{font-size:11px; color:var(--muted); font-weight:500; text-transform:uppercase; letter-spacing:.5px;}
-.price-input{display:flex; align-items:center; background:var(--cream); border:1px solid #d8cdb6; border-radius:10px; padding:0 12px; width:120px;}
+.dash-head{background:var(--olive); color:#efe7d2; padding:18px 34px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; gap:18px;}
+.dash-head .brand .b{font-size:18px; font-weight:600; letter-spacing:5px;}
+.dash-head .brand .s{font-size:10px; letter-spacing:3px; color:#bcae8c; margin-top:2px;}
+.add-btn{font-family:inherit; font-size:14px; font-weight:600; padding:11px 20px; border:1px solid #6b5a22; border-radius:30px; background:rgba(255,255,255,.08); color:#efe7d2; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .2s, transform .12s;}
+.add-btn:hover{background:rgba(255,255,255,.16);}
+.add-btn:active{transform:scale(.97);}
+.dash-body{flex:1; overflow-y:auto; padding:26px 34px 40px;}
+.dash-title{font-size:14px; color:var(--muted); margin-bottom:20px; font-weight:500;}
+.svc-row{background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 22px; margin-bottom:14px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; box-shadow:var(--shadow-sm);}
+.svc-name{flex:1 1 180px; font-size:20px; font-weight:600; color:var(--brown);}
+.svc-name .nopromo{display:inline-block; font-size:11px; font-weight:600; letter-spacing:.5px; color:var(--muted); background:var(--cream); border:1px solid var(--line); border-radius:20px; padding:2px 9px; margin-left:8px; vertical-align:middle; text-transform:uppercase;}
+.price-field{display:flex; flex-direction:column; gap:5px;}
+.price-field label{font-size:10px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.6px;}
+.price-input{display:flex; align-items:center; background:var(--cream); border:1px solid #d8cdb6; border-radius:11px; padding:0 12px; width:118px;}
 .price-input span{color:var(--muted); font-weight:600;}
 .price-input input{border:none; background:transparent; font-family:inherit; font-size:17px; font-weight:600; color:var(--brown); width:100%; padding:10px 4px; outline:none;}
 .price-input.promo{border-color:var(--coral); background:#fbf1ec;}
 .price-input.promo input{color:var(--coral);}
-.open-btn{font-family:inherit; font-size:14px; font-weight:600; padding:12px 20px; border:none; border-radius:10px; background:var(--brown); color:#fff; cursor:pointer; transition:transform .15s;}
-.open-btn:active{transform:scale(.96);}
-.saved-pill{font-size:12px; color:var(--sage-ink); background:var(--sage); padding:5px 12px; border-radius:20px; opacity:0; transition:opacity .3s;}
+.saved-pill{font-size:12px; color:var(--sage-ink); background:var(--sage); padding:5px 12px; border-radius:20px; opacity:0; transition:opacity .3s; font-weight:500;}
 .saved-pill.show{opacity:1;}
+.row-tools{display:flex; gap:8px;}
+.icon-btn{width:40px; height:40px; border:1px solid var(--line); border-radius:11px; background:#fff; color:var(--brown); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .18s, border-color .18s, transform .12s;}
+.icon-btn:hover{background:var(--cream);}
+.icon-btn.danger:hover{background:#fbeae5; border-color:var(--coral); color:var(--coral-deep);}
+.icon-btn:active{transform:scale(.94);}
+.icon-btn svg{width:18px; height:18px;}
+.open-btn{font-family:inherit; font-size:14px; font-weight:600; padding:13px 22px; border:none; border-radius:12px; background:var(--brown); color:#fff; cursor:pointer; transition:transform .14s, background .2s; display:flex; align-items:center; gap:8px;}
+.open-btn:hover{background:#4a4019;}
+.open-btn:active{transform:scale(.96);}
 
-/* ---------- CLIENT SAVINGS ---------- */
-.tabs{display:flex; gap:10px; padding:16px 30px 8px; flex-shrink:0; overflow-x:auto; align-items:center;}
-.back-btn{font-family:inherit; font-size:14px; font-weight:600; padding:10px 16px; border:1px solid #c9bda3; border-radius:30px; background:#fff; color:var(--brown); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px;}
-.tab{font-family:inherit; font-size:15px; font-weight:600; padding:11px 22px; border:1px solid #c9bda3; border-radius:30px; background:transparent; color:#6b6045; cursor:pointer; white-space:nowrap; transition:all .25s ease;}
-.tab.active{background:var(--brown); color:#fff; border-color:var(--brown);}
-.client-svc-name{font-size:16px; font-weight:600; color:var(--brown); letter-spacing:.5px;}
+/* ---------- MODAL ---------- */
+.modal-back{position:fixed; inset:0; z-index:500; background:rgba(40,33,12,.5); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:24px;}
+.modal-back.show{display:flex;}
+.modal{background:var(--cream); border-radius:22px; width:min(560px,100%); max-height:90vh; overflow-y:auto; box-shadow:var(--shadow); padding:30px 32px;}
+.modal h2{font-size:22px; color:var(--brown); font-weight:700; margin-bottom:4px;}
+.modal .sub{font-size:13px; color:var(--muted); margin-bottom:22px;}
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:6px;}
+.field input{width:100%; font-family:inherit; font-size:16px; color:var(--brown); background:#fff; border:1px solid #d8cdb6; border-radius:11px; padding:12px 14px; outline:none;}
+.field input:focus{border-color:var(--coral);}
+.field-row{display:flex; gap:14px;}
+.field-row .field{flex:1;}
+.hint{font-size:11px; color:var(--muted); margin-top:5px;}
+.modal-actions{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:26px;}
+.btn{font-family:inherit; font-size:15px; font-weight:600; padding:13px 26px; border-radius:12px; cursor:pointer; border:none; transition:transform .12s, background .2s;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--coral); color:#fff;}
+.btn-primary:hover{background:var(--coral-deep);}
+.btn-ghost{background:transparent; color:var(--muted); border:1px solid var(--line);}
+.btn-ghost:hover{background:#fff;}
+.err{color:var(--coral-deep); font-size:13px; font-weight:500; min-height:18px;}
 
-.stage{flex:1; display:flex; padding:4px 30px 16px; gap:26px; min-height:0;}
-.left{flex:0 0 35%; display:flex; flex-direction:column; justify-content:center;}
-h1{font-size:clamp(36px,5vw,60px); font-weight:700; color:var(--brown); line-height:1;}
-.lede{font-size:clamp(15px,1.7vw,18px); color:#6b6045; margin-top:12px; line-height:1.5; max-width:92%;}
-.benefits{margin-top:22px; display:flex; flex-direction:column; gap:12px;}
-.benefit{display:flex; align-items:center; gap:13px; font-size:clamp(14px,1.6vw,17px); color:var(--ink); font-weight:500;}
-.bdot{flex-shrink:0; width:30px; height:30px; border-radius:50%; background:var(--cream); border:1px solid #d8cdb6; display:flex; align-items:center; justify-content:center; color:var(--coral); font-size:15px; font-weight:700;}
-.promo-tag{margin-top:24px; background:var(--cream); border:1px solid #d8cdb6; border-left:3px solid var(--coral); border-radius:10px; padding:13px 16px; align-self:flex-start;}
-.promo-tag .pt-line1{font-size:13px; color:var(--muted);}
-.promo-tag .pt-line2{font-size:15px; color:var(--ink); margin-top:2px;}
-.promo-tag b{color:var(--coral); font-weight:600;}
+/* ---------- CLIENT ---------- */
+.topbar{display:flex; align-items:center; gap:16px; padding:18px 38px 6px; flex-shrink:0;}
+.back-btn{font-family:inherit; font-size:14px; font-weight:600; padding:11px 18px; border:1px solid var(--line); border-radius:30px; background:#fff; color:var(--brown); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px; box-shadow:var(--shadow-sm);}
+.back-btn:active{transform:scale(.97);}
+.topbar .brandmark{margin-left:auto; font-size:12px; letter-spacing:4px; color:var(--muted); font-weight:600;}
+
+.stage{flex:1; display:flex; padding:6px 38px 20px; gap:40px; min-height:0; position:relative;}
+
+/* left rail */
+.left{flex:0 0 36%; display:flex; flex-direction:column; justify-content:center; min-width:0; position:relative; z-index:2;}
+.eyebrow{font-size:12px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--coral); margin-bottom:12px;}
+h1.svc{font-size:clamp(40px,5.2vw,68px); font-weight:800; color:var(--brown); line-height:.98; letter-spacing:-1.5px;}
+.lede{font-size:clamp(15px,1.5vw,18px); color:#6b6045; margin-top:16px; line-height:1.55; max-width:94%;}
+.benefits{margin-top:26px; display:flex; flex-direction:column; gap:14px;}
+.benefit{display:flex; align-items:center; gap:14px; font-size:clamp(14px,1.45vw,17px); color:var(--ink); font-weight:500;}
+.bdot{flex-shrink:0; width:30px; height:30px; border-radius:50%; background:#fff; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--coral);}
+.bdot svg{width:15px; height:15px;}
+.promo-tag{margin-top:30px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--coral); border-radius:13px; padding:14px 18px; align-self:flex-start; box-shadow:var(--shadow-sm);}
+.promo-tag .l1{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; font-weight:600;}
+.promo-tag .l2{font-size:16px; color:var(--ink); margin-top:4px;}
+.promo-tag b{color:var(--coral); font-weight:700;}
 .promo-tag .reg{text-decoration:line-through; color:#b3a890;}
 
-.right{flex:1; display:flex; flex-direction:column; justify-content:center; min-width:0;}
-.hero{background:var(--brown); border-radius:22px; padding:clamp(18px,2.4vw,28px) clamp(22px,2.8vw,32px); margin-bottom:16px;}
-.hero-top{display:flex; justify-content:space-between; align-items:flex-start; gap:18px; margin-bottom:16px;}
-.hero-label{color:#d8c9a8; font-size:clamp(12px,1.3vw,15px); font-weight:500; letter-spacing:1px; text-transform:uppercase;}
-.hero-num{color:#fff; font-size:clamp(48px,7.5vw,86px); font-weight:700; line-height:.95; letter-spacing:-2px;}
-.hero-sub{color:#bcae8c; font-size:13px; margin-top:6px;}
-.hero-right{text-align:right; flex-shrink:0; padding-top:4px;}
-.hero-right .q{color:#d8c9a8; font-size:13px;}
-.hero-right .t{color:#f0c9a8; font-size:clamp(16px,1.9vw,21px); font-weight:600; margin-top:2px;}
-.hero-right .p{color:#bcae8c; font-size:13px; margin-top:6px;}
+/* right canvas */
+.right{flex:1; display:flex; flex-direction:column; justify-content:center; gap:clamp(14px,2vh,22px); min-width:0; position:relative; z-index:2;}
+.wm{position:absolute; right:-2%; top:50%; transform:translateY(-50%); font-size:46vh; font-weight:800; color:var(--brown); opacity:.04; z-index:0; pointer-events:none; line-height:1; user-select:none;}
 
-.slider-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;}
-.slider-head .lbl{color:#d8c9a8; font-size:13px; font-weight:500; letter-spacing:1px; text-transform:uppercase;}
-.slider-head .val{color:#fff; font-size:18px; font-weight:600;}
-input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:8px; border-radius:8px; background:#5c5128; outline:none; cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:30px; height:30px; border-radius:50%; background:var(--coral); border:3px solid #fff; cursor:pointer;}
-input[type=range]::-moz-range-thumb{width:30px; height:30px; border-radius:50%; background:var(--coral); cursor:pointer; border:3px solid #fff;}
-.ticks{display:flex; justify-content:space-between; margin-top:8px; padding:0 2px;}
-.tick{color:#9c8f6a; font-size:12px; font-weight:500; cursor:pointer; padding:2px 6px; border-radius:6px; transition:all .2s;}
-.tick.on{color:#fff; background:#5c5128;}
+.hero{position:relative; z-index:2;}
+.hero .label{font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted);}
+.hero .num{font-size:clamp(64px,10vw,128px); font-weight:800; color:var(--coral); line-height:.86; letter-spacing:-4px; margin-top:2px;}
+.hero .sub{font-size:clamp(14px,1.4vw,17px); color:#6b6045; margin-top:10px; min-height:22px;}
 
-.summary{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
-.metric{background:#fff; border:1px solid #e2d8c2; border-radius:16px; padding:clamp(14px,1.8vw,20px); text-align:center;}
-.metric.best{border:2px solid var(--coral);}
-.metric .ml{font-size:13px; color:var(--muted); font-weight:500; margin-bottom:6px;}
-.metric .mv{font-size:clamp(24px,3.4vw,38px); font-weight:700; color:var(--brown); line-height:1;}
-.metric .mv.coral{color:var(--coral);}
-.metric .ms{font-size:12px; color:var(--muted); margin-top:6px; min-height:16px;}
-.metric .strike{font-size:13px; color:#b3a890; text-decoration:line-through;}
+.figs{display:flex; align-items:flex-end; gap:30px; flex-wrap:wrap; position:relative; z-index:2;}
+.fig .fl{font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:3px;}
+.fig .fv{font-size:clamp(30px,3.6vw,46px); font-weight:700; color:var(--brown); line-height:1;}
+.fig .fv .unit{font-size:.42em; font-weight:600; color:var(--muted); letter-spacing:.5px;}
+.fig .fs{font-size:13px; color:var(--muted); margin-top:4px; min-height:18px;}
+.fig .fs .strike{text-decoration:line-through;}
 
-.confirm{margin-top:14px; background:var(--coral); color:#fff; border-radius:14px; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; font-size:clamp(14px,1.6vw,17px); font-weight:500; opacity:0; transform:translateY(8px); transition:all .35s ease;}
+/* slider */
+.sliderwrap{position:relative; z-index:2; padding-top:34px;}
+.slider-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;}
+.slider-head .lbl{font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted);}
+.slider-head .bv{font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--coral);}
+.track{position:relative;}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:12px; border-radius:12px; background:linear-gradient(var(--coral),var(--coral)) no-repeat, #e6dcc5; background-size:var(--fill,100%) 100%; outline:none; cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:36px; height:36px; border-radius:50%; background:var(--coral); border:4px solid #fff; box-shadow:0 6px 16px -4px rgba(168,84,60,.6); cursor:pointer; transition:transform .12s; margin-top:-12px;}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.08);}
+input[type=range]::-moz-range-thumb{width:36px; height:36px; border-radius:50%; background:var(--coral); border:4px solid #fff; box-shadow:0 6px 16px -4px rgba(168,84,60,.6); cursor:pointer;}
+input[type=range]::-webkit-slider-runnable-track{height:12px; border-radius:12px;}
+.bubble{position:absolute; top:-2px; transform:translate(-50%,-100%); background:var(--brown); color:#fff; font-size:13px; font-weight:600; padding:6px 12px; border-radius:9px; white-space:nowrap; pointer-events:none; transition:left .08s linear;}
+.bubble::after{content:""; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%); border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--brown);}
+.ticks{display:flex; justify-content:space-between; margin-top:12px; padding:0 4px;}
+.tick{font-size:13px; font-weight:600; color:#a99d78; cursor:pointer; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:9px; transition:all .18s;}
+.tick.on{color:#fff; background:var(--brown);}
+
+/* tier ladder */
+.ladder{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; position:relative; z-index:2;}
+.tier{position:relative; background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 16px 16px; text-align:center; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .18s, border-color .18s, box-shadow .18s;}
+.tier:hover{transform:translateY(-2px);}
+.tier .cap{font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--muted);}
+.tier .per{font-size:clamp(26px,3vw,36px); font-weight:800; color:var(--brown); line-height:1; margin:7px 0 2px; letter-spacing:-1px;}
+.tier .per .u{font-size:.38em; font-weight:600; color:var(--muted);}
+.tier .sv{font-size:13px; color:var(--sage-ink); background:var(--sage); display:inline-block; padding:3px 11px; border-radius:20px; margin-top:8px; font-weight:600; min-height:24px;}
+.tier.active{border-color:var(--coral); background:#fff;}
+.tier.active::before{content:""; position:absolute; inset:0; border-radius:18px; box-shadow:0 0 0 2px var(--coral) inset; pointer-events:none;}
+.tier.best{border-color:var(--coral); transform:translateY(-8px); box-shadow:var(--shadow); padding-top:26px;}
+.tier.best:hover{transform:translateY(-11px);}
+.ribbon{position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--coral); color:#fff; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; white-space:nowrap; box-shadow:var(--shadow-sm);}
+
+/* confirm bar */
+.confirm{position:relative; z-index:2; background:var(--brown); color:#fff; border-radius:16px; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; gap:16px; opacity:0; transform:translateY(10px); transition:all .4s ease;}
 .confirm.show{opacity:1; transform:translateY(0);}
-.confirm b{font-weight:700;}
+.confirm .ct{font-size:clamp(15px,1.5vw,18px); font-weight:500;}
+.confirm .cs{font-size:13px; color:var(--sage-ink); background:var(--sage); padding:7px 15px; border-radius:30px; font-weight:700; white-space:nowrap;}
 
-.footer{background:var(--olive); color:#efe7d2; padding:11px 30px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; font-size:13px; flex-wrap:wrap; gap:8px;}
+.footer{background:var(--olive); color:#efe7d2; padding:12px 38px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; font-size:13px; flex-wrap:wrap; gap:8px;}
 .footer .cta{color:#f0c9a8; font-weight:600;}
 
+/* reveal animation */
+@keyframes fadeUp{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
+.client.active .reveal{opacity:0; animation:fadeUp .6s cubic-bezier(.2,.7,.2,1) forwards;}
+.client.active .d1{animation-delay:.05s;} .client.active .d2{animation-delay:.13s;}
+.client.active .d3{animation-delay:.21s;} .client.active .d4{animation-delay:.29s;}
+.client.active .d5{animation-delay:.37s;} .client.active .d6{animation-delay:.45s;}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
-@media (max-width:860px){ .stage{flex-direction:column; overflow-y:auto;} .left{flex:none;} }
+@media (max-width:1000px) and (orientation:landscape){
+  .stage{gap:24px; padding:6px 24px 14px;} .left{flex:0 0 34%;}
+}
 </style>
 </head>
 <body>
 
+<!-- ROTATE PROMPT -->
+<div id="rotate">
+  <div class="icon"></div>
+  <div class="t">Please rotate to landscape</div>
+  <div class="s">This screen is designed to be shown sideways, the way you hold the tablet at the chair.</div>
+</div>
+
 <!-- ============ DASHBOARD ============ -->
 <div class="screen active" id="dash">
   <div class="dash-head">
-    <div><div class="b">ZEUGMA SPA</div><div class="s">PRICING DASHBOARD</div></div>
-    <div class="hint">Set the current promo price, then open a service for the client</div>
+    <div class="brand"><div class="b">ZEUGMA SPA</div><div class="s">PRICING DASHBOARD</div></div>
+    <button class="add-btn" id="addBtn">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add service
+    </button>
   </div>
   <div class="dash-body">
-    <div class="dash-title">Tap a price to edit. Changes save automatically and update the client view.</div>
+    <div class="dash-title">Tap a price to edit. Changes save to this tablet automatically and update the client view. Set a promo to 0 if there is no current promo.</div>
     <div id="svcRows"></div>
   </div>
 </div>
 
 <!-- ============ CLIENT SAVINGS ============ -->
-<div class="screen" id="client">
-  <div class="tabs" id="tabs">
-    <button class="back-btn" id="backBtn">&#8592; Dashboard</button>
-    <div class="client-svc-name" id="clientSvcName"></div>
+<div class="screen client" id="client">
+  <div class="topbar">
+    <button class="back-btn" id="backBtn">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </button>
+    <div class="brandmark">ZEUGMA SPA</div>
   </div>
   <div class="stage">
     <div class="left" id="left"></div>
     <div class="right" id="right"></div>
   </div>
   <div class="footer">
-    <div>The more sessions you book, the more you save per visit</div>
+    <div>The more sessions you book, the more you save per visit.</div>
     <div class="cta">Zeugma Spa &middot; 501 NE 31st St, Miami &middot; (305) 481-5659</div>
+  </div>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <h2 id="modalTitle">Add service</h2>
+    <div class="sub">This shows up on the dashboard and in the client savings view.</div>
+    <div class="field">
+      <label>Service name</label>
+      <input type="text" id="fName" placeholder="e.g. PRP Under Eye">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Regular price</label>
+        <input type="number" id="fReg" inputmode="numeric" placeholder="550">
+      </div>
+      <div class="field">
+        <label>Promo price</label>
+        <input type="number" id="fPromo" inputmode="numeric" placeholder="290">
+        <div class="hint">Enter 0 if there is no current promo.</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Short description</label>
+      <input type="text" id="fLede" placeholder="One calm, benefit-led line.">
+    </div>
+    <div class="field">
+      <label>Benefit 1</label>
+      <input type="text" id="fB1" placeholder="e.g. Brightens the under-eye area">
+    </div>
+    <div class="field">
+      <label>Benefit 2</label>
+      <input type="text" id="fB2" placeholder="optional">
+    </div>
+    <div class="field">
+      <label>Benefit 3</label>
+      <input type="text" id="fB3" placeholder="optional">
+    </div>
+    <div class="err" id="formErr"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="saveBtn">Save service</button>
+    </div>
   </div>
 </div>
 
 <script>
 const DEFAULTS = [
-  { key:"ezgel",  name:"EZ Gel",            reg:1300, promo:749, lede:"Natural, smoother looking skin \u2014 with no filler.",
+  { key:"ezgel",  name:"EZ Gel",            reg:1300, promo:749, lede:"Natural, smoother looking skin, with no filler.",
     benefits:["Collagen-boosting","No synthetic filler","Subtle, natural results"] },
   { key:"vivace", name:"Vivace",            reg:850,  promo:449, lede:"Smoother, firmer looking skin and a refreshed glow.",
-    benefits:["Tightens & firms","Minimal downtime","Radiant, even tone"] },
+    benefits:["Tightens and firms","Minimal downtime","Radiant, even tone"] },
   { key:"prph",   name:"PRP Hair",          reg:549,  promo:299, lede:"Support healthier, fuller looking hair, naturally.",
     benefits:["Uses your own plasma","Stimulates growth","Thicker, fuller look"] },
   { key:"hydra",  name:"Hydrafacial",       reg:250,  promo:179, lede:"Refreshed, glowing, deeply hydrated skin.",
-    benefits:["Deep cleanse & hydrate","Instant glow","Zero downtime"] },
+    benefits:["Deep cleanse and hydrate","Instant glow","Zero downtime"] },
   { key:"prpmn",  name:"PRP Microneedling", reg:540,  promo:349, lede:"Smoother, refreshed, rejuvenated skin.",
     benefits:["Boosts collagen","Refines texture","Natural rejuvenation"] },
 ];
+const STORE_KEY = "zeugma_services";
+const LEGACY_KEY = "zeugma_prices";
+
 const usd = n => "$" + Math.round(n).toLocaleString("en-US");
 const rateFor = q => q>=6 ? 0.15 : (q>=2 ? 0.10 : 0);
+const num = v => { const n = parseInt(v,10); return (isNaN(n)||n<0) ? 0 : n; };
 
-// ---- load / save prices ----
+// ---- data model ----
+function normalize(s){
+  return {
+    key: s.key || slugify(s.name||"service"),
+    name: (s.name||"Service").toString().trim(),
+    reg: num(s.reg), promo: num(s.promo),
+    lede: (s.lede||"").toString(),
+    benefits: Array.isArray(s.benefits) ? s.benefits.filter(b=>b&&b.trim()).slice(0,3) : []
+  };
+}
+function seed(){ return DEFAULTS.map(d=>normalize({...d, benefits:[...d.benefits]})); }
+
 function loadServices(){
   try{
-    const saved = JSON.parse(localStorage.getItem("zeugma_prices")||"null");
-    if(saved){
-      return DEFAULTS.map(d=>{
-        const s = saved.find(x=>x.key===d.key);
-        return s ? {...d, reg:s.reg, promo:s.promo} : d;
+    const raw = JSON.parse(localStorage.getItem(STORE_KEY)||"null");
+    if(Array.isArray(raw) && raw.length) return raw.map(normalize);
+  }catch(e){}
+  // one-time migration from the old price-only storage
+  try{
+    const legacy = JSON.parse(localStorage.getItem(LEGACY_KEY)||"null");
+    if(Array.isArray(legacy)){
+      const merged = DEFAULTS.map(d=>{
+        const s = legacy.find(x=>x.key===d.key);
+        return normalize(s ? {...d, reg:s.reg, promo:s.promo} : {...d});
       });
+      saveServices(merged);
+      return merged;
     }
   }catch(e){}
-  return DEFAULTS.map(d=>({...d}));
+  const s = seed(); saveServices(s); return s;
 }
-function savePrices(svcs){
-  try{ localStorage.setItem("zeugma_prices", JSON.stringify(svcs.map(s=>({key:s.key,reg:s.reg,promo:s.promo})))); }catch(e){}
+function saveServices(svcs){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(svcs)); }catch(e){} }
+function slugify(name){
+  let base = name.toLowerCase().replace(/[^a-z0-9]+/g,"").slice(0,16) || "svc";
+  let key = base, i = 2;
+  while(typeof services!=="undefined" && services.some(s=>s.key===key)){ key = base + i; i++; }
+  return key;
 }
 
 let services = loadServices();
@@ -173,7 +345,7 @@ function buildDashboard(){
   const wrap = document.getElementById("svcRows");
   wrap.innerHTML = services.map(s=>`
     <div class="svc-row" data-key="${s.key}">
-      <div class="svc-name">${s.name}</div>
+      <div class="svc-name">${esc(s.name)}${(s.promo>0 && s.promo<s.reg)?"":'<span class="nopromo">No promo</span>'}</div>
       <div class="price-field">
         <label>Regular price</label>
         <div class="price-input"><span>$</span><input type="number" inputmode="numeric" data-key="${s.key}" data-field="reg" value="${s.reg}"></div>
@@ -183,24 +355,84 @@ function buildDashboard(){
         <div class="price-input promo"><span>$</span><input type="number" inputmode="numeric" data-key="${s.key}" data-field="promo" value="${s.promo}"></div>
       </div>
       <span class="saved-pill">Saved</span>
-      <button class="open-btn" data-open="${s.key}">Open for client &#8594;</button>
+      <div class="row-tools">
+        <button class="icon-btn" data-edit="${s.key}" title="Edit details">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        </button>
+        <button class="icon-btn danger" data-remove="${s.key}" title="Remove service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      </div>
+      <button class="open-btn" data-open="${s.key}">Open for client
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>`).join("");
 
   wrap.querySelectorAll("input").forEach(inp=>{
     inp.addEventListener("input",e=>{
       const s = services.find(x=>x.key===e.target.dataset.key);
-      const v = parseInt(e.target.value)||0;
-      s[e.target.dataset.field] = v;
-      savePrices(services);
-      const pill = e.target.closest(".svc-row").querySelector(".saved-pill");
+      s[e.target.dataset.field] = num(e.target.value);
+      saveServices(services);
+      const row = e.target.closest(".svc-row");
+      const pill = row.querySelector(".saved-pill");
       pill.classList.add("show");
       clearTimeout(pill._t); pill._t=setTimeout(()=>pill.classList.remove("show"),1200);
+      const nameEl = row.querySelector(".svc-name");
+      const hasP = s.promo>0 && s.promo<s.reg;
+      nameEl.innerHTML = esc(s.name) + (hasP?"":'<span class="nopromo">No promo</span>');
     });
   });
+  wrap.querySelectorAll(".open-btn").forEach(b=> b.addEventListener("click",()=>openClient(b.dataset.open)) );
+  wrap.querySelectorAll("[data-edit]").forEach(b=> b.addEventListener("click",()=>openModal(b.dataset.edit)) );
+  wrap.querySelectorAll("[data-remove]").forEach(b=> b.addEventListener("click",()=>removeService(b.dataset.remove)) );
+}
+function esc(str){ return (str||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
-  wrap.querySelectorAll(".open-btn").forEach(b=>{
-    b.addEventListener("click",()=>openClient(b.dataset.open));
-  });
+// ---- MODAL (add / edit) ----
+let editingKey = null;
+function openModal(key){
+  editingKey = key || null;
+  const s = key ? services.find(x=>x.key===key) : null;
+  document.getElementById("modalTitle").textContent = s ? "Edit service" : "Add service";
+  document.getElementById("fName").value  = s ? s.name : "";
+  document.getElementById("fReg").value   = s ? s.reg : "";
+  document.getElementById("fPromo").value = s ? s.promo : "";
+  document.getElementById("fLede").value  = s ? s.lede : "";
+  document.getElementById("fB1").value    = s && s.benefits[0] ? s.benefits[0] : "";
+  document.getElementById("fB2").value    = s && s.benefits[1] ? s.benefits[1] : "";
+  document.getElementById("fB3").value    = s && s.benefits[2] ? s.benefits[2] : "";
+  document.getElementById("formErr").textContent = "";
+  document.getElementById("modalBack").classList.add("show");
+  setTimeout(()=>document.getElementById("fName").focus(),50);
+}
+function closeModal(){ document.getElementById("modalBack").classList.remove("show"); editingKey=null; }
+function saveFromModal(){
+  const name = document.getElementById("fName").value.trim();
+  if(!name){ document.getElementById("formErr").textContent = "Please enter a service name."; return; }
+  const data = {
+    name,
+    reg: num(document.getElementById("fReg").value),
+    promo: num(document.getElementById("fPromo").value),
+    lede: document.getElementById("fLede").value.trim(),
+    benefits: [document.getElementById("fB1").value, document.getElementById("fB2").value, document.getElementById("fB3").value]
+  };
+  if(editingKey){
+    const s = services.find(x=>x.key===editingKey);
+    Object.assign(s, normalize({...data, key:s.key}));
+  }else{
+    services.push(normalize({...data, key:slugify(name)}));
+  }
+  saveServices(services);
+  buildDashboard();
+  closeModal();
+}
+function removeService(key){
+  if(services.length<=1){ alert("Keep at least one service on the dashboard."); return; }
+  const s = services.find(x=>x.key===key);
+  if(!confirm("Remove "+s.name+" from the dashboard?")) return;
+  services = services.filter(x=>x.key!==key);
+  saveServices(services);
+  buildDashboard();
 }
 
 // ---- SCREEN SWITCH ----
@@ -209,87 +441,122 @@ function showScreen(id){
   document.getElementById(id).classList.add("active");
 }
 function openClient(key){
-  current = services.find(s=>s.key===key);
+  current = services.find(s=>s.key===key) || services[0];
   sessions = 6;
-  document.getElementById("clientSvcName").textContent = current.name;
   showScreen("client");
   selectService(current);
 }
 document.getElementById("backBtn").addEventListener("click",()=>{ buildDashboard(); showScreen("dash"); });
+document.getElementById("addBtn").addEventListener("click",()=>openModal(null));
+document.getElementById("saveBtn").addEventListener("click",saveFromModal);
+document.getElementById("cancelBtn").addEventListener("click",closeModal);
+document.getElementById("modalBack").addEventListener("click",e=>{ if(e.target.id==="modalBack") closeModal(); });
 
-function buildLeft(s){
-  const promoSave = s.reg - s.promo;
-  const promoLine = promoSave>0
-    ? `<div class="pt-line1">Today's promo</div><div class="pt-line2"><span class="reg">${usd(s.reg)}</span> &rarr; <b>${usd(s.promo)}</b> &middot; save ${usd(promoSave)}</div>`
-    : `<div class="pt-line1">Price</div><div class="pt-line2"><b>${usd(s.promo)}</b> per session</div>`;
-  document.getElementById("left").innerHTML = `
-    <h1>${s.name}</h1>
-    <p class="lede">${s.lede}</p>
-    <div class="benefits">
-      ${s.benefits.map(b=>`<div class="benefit"><span class="bdot">&#10003;</span>${b}</div>`).join("")}
-    </div>
-    <div class="promo-tag">${promoLine}</div>`;
+// ---- CALC ----
+function calc(s, q){
+  const rate = rateFor(q);
+  const hasPromo = s.promo>0 && s.promo<s.reg;
+  const base = hasPromo ? s.promo : s.reg;
+  const gross = base*q;
+  const packageTotal = gross*(1-rate);
+  const perSession = packageTotal/q;
+  const packageSave = gross - packageTotal;
+  const promoSave = hasPromo ? (s.reg - s.promo)*q : 0;
+  const totalSave = promoSave + packageSave;
+  return {rate,hasPromo,base,gross,packageTotal,perSession,packageSave,promoSave,totalSave};
 }
 
-function buildRight(){
+// ---- LEFT RAIL ----
+function buildLeft(s){
+  const c = calc(s,sessions);
+  const promoBlock = c.hasPromo
+    ? `<div class="promo-tag reveal d5"><div class="l1">Today's promo</div>
+         <div class="l2"><span class="reg">${usd(s.reg)}</span> to <b>${usd(s.promo)}</b>, you save ${usd(s.reg-s.promo)}</div></div>`
+    : `<div class="promo-tag reveal d5"><div class="l1">Per session</div>
+         <div class="l2"><b>${usd(s.reg)}</b> single session price</div></div>`;
+  const bullets = s.benefits.length
+    ? `<div class="benefits reveal d4">${s.benefits.map(b=>`<div class="benefit"><span class="bdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>${esc(b)}</div>`).join("")}</div>`
+    : "";
+  document.getElementById("left").innerHTML = `
+    <div class="eyebrow reveal d1">Your savings, today</div>
+    <h1 class="svc reveal d2">${esc(s.name)}</h1>
+    ${s.lede?`<p class="lede reveal d3">${esc(s.lede)}</p>`:""}
+    ${bullets}
+    ${promoBlock}`;
+}
+
+// ---- RIGHT CANVAS ----
+function buildRight(s){
   document.getElementById("right").innerHTML = `
-    <div class="hero">
-      <div class="hero-top">
-        <div>
-          <div class="hero-label">Save on top of the promo</div>
-          <div class="hero-num" id="heroNum">$0</div>
-          <div class="hero-sub" id="heroSub"></div>
-        </div>
-        <div class="hero-right">
-          <div class="q">package total</div>
-          <div class="t" id="heroTotal">$0</div>
-          <div class="p" id="heroPer">$0 per session</div>
-        </div>
+    <div class="wm" id="wm">${esc((s.name||"Z").trim().charAt(0).toUpperCase())}</div>
+    <div class="hero reveal d2">
+      <div class="label" id="heroLabel">Package savings</div>
+      <div class="num" id="heroNum">$0</div>
+      <div class="sub" id="heroSub"></div>
+    </div>
+    <div class="figs reveal d3">
+      <div class="fig">
+        <div class="fl">Per session</div>
+        <div class="fv"><span id="vPer">$0</span> <span class="unit">/ session</span></div>
+        <div class="fs" id="sPer"></div>
       </div>
-      <div>
-        <div class="slider-head">
-          <span class="lbl">Drag to choose sessions</span>
-          <span class="val"><span id="sessOut">6</span> sessions</span>
-        </div>
+      <div class="fig">
+        <div class="fl">Package total</div>
+        <div class="fv" id="vTotal">$0</div>
+        <div class="fs"><span class="strike" id="sTotal"></span></div>
+      </div>
+    </div>
+    <div class="sliderwrap reveal d4">
+      <div class="slider-head">
+        <span class="lbl">Drag to choose sessions</span>
+        <span class="bv" id="bvLabel"></span>
+      </div>
+      <div class="track">
+        <div class="bubble" id="bubble"><span id="sessOut">6</span> sessions</div>
         <input type="range" id="slider" min="1" max="6" step="1" value="6">
-        <div class="ticks" id="ticks"></div>
       </div>
+      <div class="ticks" id="ticks"></div>
     </div>
-    <div class="summary">
-      <div class="metric">
-        <div class="ml">Price per session</div>
-        <div class="mv coral" id="vEach">$0</div>
-        <div class="ms" id="sEach"></div>
-      </div>
-      <div class="metric">
-        <div class="ml">Package total</div>
-        <div class="mv" id="vTotal">$0</div>
-        <div class="ms"><span class="strike" id="sTotal"></span></div>
-      </div>
-      <div class="metric best">
-        <div class="ml">Package savings</div>
-        <div class="mv coral" id="vSave">$0</div>
-        <div class="ms" id="sSave"></div>
-      </div>
-    </div>
-    <div class="confirm" id="confirm">
-      <span id="confirmText"></span>
-      <b id="confirmSave"></b>
+    <div class="ladder reveal d5" id="ladder"></div>
+    <div class="confirm reveal d6" id="confirm">
+      <span class="ct" id="confirmText"></span>
+      <span class="cs" id="confirmSave"></span>
     </div>`;
 
   const ticks = document.getElementById("ticks");
   ticks.innerHTML = [1,2,3,4,5,6].map(n=>`<span class="tick" data-n="${n}">${n}</span>`).join("");
-  ticks.querySelectorAll(".tick").forEach(t=>t.addEventListener("click",()=>{
-    sessions=+t.dataset.n; document.getElementById("slider").value=sessions; update();
-  }));
-  document.getElementById("slider").addEventListener("input",e=>{ sessions=+e.target.value; update(); });
+  ticks.querySelectorAll(".tick").forEach(t=>t.addEventListener("click",()=>setSessions(+t.dataset.n)));
+  document.getElementById("slider").addEventListener("input",e=>setSessions(+e.target.value));
+  buildLadder(s);
 }
 
+function buildLadder(s){
+  const tiers = [
+    {n:1, cap:"Single"},
+    {n:3, cap:"Popular"},
+    {n:6, cap:"Best value", best:true}
+  ];
+  document.getElementById("ladder").innerHTML = tiers.map(t=>{
+    const c = calc(s,t.n);
+    const sv = c.totalSave>0 ? "Save "+usd(c.totalSave) : "&nbsp;";
+    return `<div class="tier${t.best?" best":""}" data-n="${t.n}">
+      ${t.best?'<div class="ribbon">Best value</div>':''}
+      <div class="cap">${t.cap}</div>
+      <div class="per">${usd(c.perSession)}<span class="u">/ea</span></div>
+      <div class="sv">${sv}</div>
+    </div>`;
+  }).join("");
+  document.getElementById("ladder").querySelectorAll(".tier").forEach(el=>{
+    el.addEventListener("click",()=>setSessions(+el.dataset.n));
+  });
+}
+
+// ---- count up ----
 let animRAF=null;
 function animateNum(el,to){
   cancelAnimationFrame(animRAF);
   const from = parseInt((el.textContent||"0").replace(/[^0-9]/g,""))||0;
-  const start=performance.now(), dur=420;
+  const start=performance.now(), dur=480;
   (function step(now){
     const p=Math.min((now-start)/dur,1), e=1-Math.pow(1-p,3);
     el.textContent = usd(from+(to-from)*e);
@@ -297,43 +564,79 @@ function animateNum(el,to){
   })(performance.now());
 }
 
+function setSessions(q){
+  sessions = q;
+  document.getElementById("slider").value = q;
+  update();
+}
+
+function positionBubble(){
+  const sl=document.getElementById("slider"); if(!sl) return;
+  const pct=(sessions-1)/5;
+  sl.style.setProperty("--fill", (pct*100)+"%");
+  const w=sl.offsetWidth, thumb=36;
+  const x = pct*(w-thumb)+thumb/2;
+  const b=document.getElementById("bubble"); if(b) b.style.left = x+"px";
+}
+
 function update(){
-  const s=current, q=sessions, rate=rateFor(q);
-  const full=s.promo*q, price=full*(1-rate), pkgSave=full-price, per=price/q;
-  const promoSavePer = (s.reg - s.promo)*q;   // already saved vs regular
-  const totalSave = promoSavePer + pkgSave;     // promo + package combined
+  const s=current, q=sessions;
+  const c=calc(s,q);
 
   document.getElementById("sessOut").textContent=q;
   document.querySelectorAll(".tick").forEach(t=>t.classList.toggle("on",+t.dataset.n===q));
+  positionBubble();
 
-  animateNum(document.getElementById("heroNum"), pkgSave);
-  document.getElementById("heroSub").textContent = promoSavePer>0
-    ? "plus " + usd(promoSavePer) + " already off regular \u00b7 " + usd(totalSave) + " total saved"
-    : "";
-  document.getElementById("heroTotal").textContent=usd(price);
-  document.getElementById("heroPer").textContent=usd(per)+" per session";
+  // hero
+  const heroLabel=document.getElementById("heroLabel");
+  const heroSub=document.getElementById("heroSub");
+  if(c.totalSave>0){
+    heroLabel.textContent = c.hasPromo ? "You save in total" : "You save with a package";
+    animateNum(document.getElementById("heroNum"), c.totalSave);
+    if(c.hasPromo && c.packageSave>0){
+      heroSub.textContent = usd(c.promoSave)+" off the regular price, plus "+usd(c.packageSave)+" in package savings.";
+    }else if(c.hasPromo){
+      heroSub.textContent = "off the regular price of "+usd(s.reg*q)+" for "+q+(q===1?" session.":" sessions.");
+    }else{
+      heroSub.textContent = (c.rate*100)+"% off when you book "+q+" sessions.";
+    }
+  }else{
+    heroLabel.textContent = "Per session price";
+    document.getElementById("heroNum").textContent = usd(c.perSession);
+    heroSub.textContent = "Add a session to unlock package savings.";
+  }
 
-  document.getElementById("vEach").textContent=usd(per);
-  document.getElementById("sEach").textContent = rate>0 ? (rate*100)+"% off promo" : "promo price";
-  document.getElementById("vTotal").textContent=usd(price);
-  document.getElementById("sTotal").textContent = pkgSave>0 ? usd(full) : "";
-  document.getElementById("vSave").textContent=usd(pkgSave);
-  document.getElementById("sSave").textContent = q===6 ? "best value" : (pkgSave>0?"vs promo single":"single session");
+  // figures
+  document.getElementById("vPer").textContent = usd(c.perSession);
+  document.getElementById("sPer").innerHTML = c.rate>0 ? '<span class="strike">'+usd(c.base)+'</span> at single price' : "single session price";
+  document.getElementById("vTotal").textContent = usd(c.packageTotal);
+  document.getElementById("sTotal").textContent = c.packageSave>0 ? usd(c.gross) : "";
 
-  const c=document.getElementById("confirm");
-  if(q>=2){
-    c.classList.add("show");
-    document.getElementById("confirmText").innerHTML = `${s.name} &middot; ${q}-session package`;
-    document.getElementById("confirmSave").textContent = "Saves "+usd(totalSave)+" total";
-  } else { c.classList.remove("show"); }
+  // best value label by slider
+  document.getElementById("bvLabel").textContent = q===6 ? "Best value, 15% off" : (c.rate>0 ? (c.rate*100)+"% off" : "");
+
+  // ladder active highlight
+  document.querySelectorAll(".tier").forEach(el=>el.classList.toggle("active",+el.dataset.n===q));
+
+  // confirm bar
+  const cf=document.getElementById("confirm");
+  if(q>=2 && c.totalSave>0){
+    cf.classList.add("show");
+    document.getElementById("confirmText").innerHTML = `${esc(s.name)} &middot; ${q} session package`;
+    document.getElementById("confirmSave").textContent = "Saves "+usd(c.totalSave)+" total";
+  }else{
+    cf.classList.remove("show");
+  }
 }
 
 function selectService(s){
   current=s; sessions=6;
-  buildLeft(s); buildRight();
+  buildLeft(s); buildRight(s);
   document.getElementById("heroNum").textContent="$0";
-  update();
+  requestAnimationFrame(()=>{ update(); });
 }
+
+window.addEventListener("resize",()=>{ if(document.getElementById("client").classList.contains("active")) positionBubble(); });
 
 buildDashboard();
 </script>
