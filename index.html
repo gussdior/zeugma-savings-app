@@ -7,25 +7,27 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <title>Zeugma · Package Savings</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --olive:#4A3C0E; --brown:#3D3416; --sand:#E5DFD2; --cream:#EFEAE0;
   --coral:#C0664A; --coral-deep:#a8543c; --sage:#E2EAD9; --sage-ink:#51662f;
+  --gold:#C8A24C; --gold-deep:#b08e3e;
   --ink:#3A3320; --muted:#8a7f63; --line:#ddd0b6;
+  --serif:'Playfair Display', Georgia, 'Times New Roman', serif;
+  --sans:'Poppins', sans-serif;
   --shadow:0 18px 40px -18px rgba(61,52,22,.45);
   --shadow-sm:0 8px 22px -12px rgba(61,52,22,.35);
 }
 *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
 body{
-  font-family:'Poppins',sans-serif; color:var(--ink); overflow:hidden; -webkit-user-select:none;
+  font-family:var(--sans); color:var(--ink); overflow:hidden; -webkit-user-select:none;
   background:
-    radial-gradient(1200px 700px at 78% 18%, #f3eee2 0%, rgba(243,238,226,0) 60%),
-    radial-gradient(900px 600px at 12% 92%, #ece4d3 0%, rgba(236,228,211,0) 55%),
+    radial-gradient(1200px 700px at 72% 14%, #f4efe3 0%, rgba(244,239,227,0) 60%),
+    radial-gradient(900px 600px at 10% 96%, #ece4d3 0%, rgba(236,228,211,0) 55%),
     var(--sand);
 }
-/* subtle paper grain */
 body::before{
   content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
@@ -33,14 +35,11 @@ body::before{
 .screen{position:relative; z-index:1; height:100vh; display:none; flex-direction:column;}
 .screen.active{display:flex;}
 
-/* ---------- ROTATE PROMPT (portrait) ---------- */
-#rotate{
-  display:none; position:fixed; inset:0; z-index:9999; background:var(--olive); color:#efe7d2;
-  flex-direction:column; align-items:center; justify-content:center; gap:22px; text-align:center; padding:40px;
-}
-#rotate .icon{width:74px; height:50px; border:3px solid #d8c9a8; border-radius:9px; position:relative; animation:rock 2.4s ease-in-out infinite; transform-origin:50% 50%;}
+/* ---------- ROTATE PROMPT ---------- */
+#rotate{display:none; position:fixed; inset:0; z-index:9999; background:var(--olive); color:#efe7d2; flex-direction:column; align-items:center; justify-content:center; gap:22px; text-align:center; padding:40px;}
+#rotate .icon{width:74px; height:50px; border:3px solid #d8c9a8; border-radius:9px; position:relative; animation:rock 2.4s ease-in-out infinite;}
 #rotate .icon::after{content:""; position:absolute; top:50%; left:50%; width:6px; height:6px; border-radius:50%; background:#d8c9a8; transform:translate(-50%,-50%);}
-#rotate .t{font-size:22px; font-weight:600; letter-spacing:.5px;}
+#rotate .t{font-size:22px; font-weight:600;}
 #rotate .s{font-size:14px; color:#bcae8c; max-width:320px; line-height:1.5;}
 @keyframes rock{0%,100%{transform:rotate(0)}45%,55%{transform:rotate(90deg)}}
 @media (orientation:portrait){#rotate{display:flex;}}
@@ -54,12 +53,12 @@ body::before{
 .add-btn:active{transform:scale(.97);}
 .dash-body{flex:1; overflow-y:auto; padding:26px 34px 40px;}
 .dash-title{font-size:14px; color:var(--muted); margin-bottom:20px; font-weight:500;}
-.svc-row{background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 22px; margin-bottom:14px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; box-shadow:var(--shadow-sm);}
-.svc-name{flex:1 1 180px; font-size:20px; font-weight:600; color:var(--brown);}
+.svc-row{background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 22px; margin-bottom:14px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; box-shadow:var(--shadow-sm);}
+.svc-name{flex:1 1 160px; font-size:20px; font-weight:600; color:var(--brown);}
 .svc-name .nopromo{display:inline-block; font-size:11px; font-weight:600; letter-spacing:.5px; color:var(--muted); background:var(--cream); border:1px solid var(--line); border-radius:20px; padding:2px 9px; margin-left:8px; vertical-align:middle; text-transform:uppercase;}
-.price-field{display:flex; flex-direction:column; gap:5px;}
-.price-field label{font-size:10px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.6px;}
-.price-input{display:flex; align-items:center; background:var(--cream); border:1px solid #d8cdb6; border-radius:11px; padding:0 12px; width:118px;}
+.price-field,.sess-field{display:flex; flex-direction:column; gap:5px;}
+.price-field label,.sess-field label{font-size:10px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.6px;}
+.price-input{display:flex; align-items:center; background:var(--cream); border:1px solid #d8cdb6; border-radius:11px; padding:0 12px; width:112px;}
 .price-input span{color:var(--muted); font-weight:600;}
 .price-input input{border:none; background:transparent; font-family:inherit; font-size:17px; font-weight:600; color:var(--brown); width:100%; padding:10px 4px; outline:none;}
 .price-input.promo{border-color:var(--coral); background:#fbf1ec;}
@@ -76,6 +75,11 @@ body::before{
 .check.toggle:active{transform:scale(.9);}
 .pct-badge{font-size:11px; font-weight:700; color:var(--coral); background:#fbf1ec; border:1px solid #e8cbbf; border-radius:20px; padding:2px 8px; letter-spacing:.3px;}
 .pct-badge:empty{display:none;}
+.stepper{display:flex; align-items:center; gap:4px; background:var(--cream); border:1px solid #d8cdb6; border-radius:11px; padding:3px;}
+.stepper .step{width:30px; height:32px; border:none; background:#fff; border-radius:8px; font-family:inherit; font-size:18px; font-weight:600; color:var(--brown); cursor:pointer; line-height:1; transition:background .15s, transform .1s;}
+.stepper .step:hover{background:var(--sand);}
+.stepper .step:active{transform:scale(.92);}
+.stepper .sess-val{min-width:26px; text-align:center; font-size:16px; font-weight:700; color:var(--brown);}
 .saved-pill{font-size:12px; color:var(--sage-ink); background:var(--sage); padding:5px 12px; border-radius:20px; opacity:0; transition:opacity .3s; font-weight:500;}
 .saved-pill.show{opacity:1;}
 .row-tools{display:flex; gap:8px;}
@@ -84,7 +88,7 @@ body::before{
 .icon-btn.danger:hover{background:#fbeae5; border-color:var(--coral); color:var(--coral-deep);}
 .icon-btn:active{transform:scale(.94);}
 .icon-btn svg{width:18px; height:18px;}
-.open-btn{font-family:inherit; font-size:14px; font-weight:600; padding:13px 22px; border:none; border-radius:12px; background:var(--brown); color:#fff; cursor:pointer; transition:transform .14s, background .2s; display:flex; align-items:center; gap:8px;}
+.open-btn{font-family:inherit; font-size:14px; font-weight:600; padding:13px 20px; border:none; border-radius:12px; background:var(--brown); color:#fff; cursor:pointer; transition:transform .14s, background .2s; display:flex; align-items:center; gap:8px;}
 .open-btn:hover{background:#4a4019;}
 .open-btn:active{transform:scale(.96);}
 
@@ -92,7 +96,7 @@ body::before{
 .modal-back{position:fixed; inset:0; z-index:500; background:rgba(40,33,12,.5); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:24px;}
 .modal-back.show{display:flex;}
 .modal{background:var(--cream); border-radius:22px; width:min(560px,100%); max-height:90vh; overflow-y:auto; box-shadow:var(--shadow); padding:30px 32px;}
-.modal h2{font-size:22px; color:var(--brown); font-weight:700; margin-bottom:4px;}
+.modal h2{font-family:var(--serif); font-size:26px; color:var(--brown); font-weight:700; margin-bottom:4px;}
 .modal .sub{font-size:13px; color:var(--muted); margin-bottom:22px;}
 .field{margin-bottom:16px;}
 .field label{display:block; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.6px; color:var(--muted); margin-bottom:6px;}
@@ -111,95 +115,115 @@ body::before{
 .err{color:var(--coral-deep); font-size:13px; font-weight:500; min-height:18px;}
 
 /* ---------- CLIENT ---------- */
-.topbar{display:flex; align-items:center; gap:16px; padding:18px 38px 6px; flex-shrink:0;}
+.client{position:relative;}
+.leaf{position:fixed; bottom:-40px; left:-60px; width:340px; height:340px; z-index:0; opacity:.07; pointer-events:none; color:var(--brown); filter:blur(1px);}
+.topbar{display:flex; align-items:center; gap:16px; padding:16px 40px 4px; flex-shrink:0; z-index:2;}
 .back-btn{font-family:inherit; font-size:14px; font-weight:600; padding:11px 18px; border:1px solid var(--line); border-radius:30px; background:#fff; color:var(--brown); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px; box-shadow:var(--shadow-sm);}
 .back-btn:active{transform:scale(.97);}
-.topbar .brandmark{margin-left:auto; font-size:12px; letter-spacing:4px; color:var(--muted); font-weight:600;}
+.topbar .brandmark{margin-left:auto; font-size:13px; letter-spacing:5px; color:var(--muted); font-weight:600;}
 
-.stage{flex:1; display:flex; padding:6px 38px 20px; gap:40px; min-height:0; position:relative;}
+.stage{flex:1; display:flex; padding:6px 40px 10px; gap:42px; min-height:0; z-index:2;}
 
 /* left rail */
-.left{flex:0 0 36%; display:flex; flex-direction:column; justify-content:center; min-width:0; position:relative; z-index:2;}
-.eyebrow{font-size:12px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--coral); margin-bottom:12px;}
-h1.svc{font-size:clamp(40px,5.2vw,68px); font-weight:800; color:var(--brown); line-height:.98; letter-spacing:-1.5px;}
-.lede{font-size:clamp(15px,1.5vw,18px); color:#6b6045; margin-top:16px; line-height:1.55; max-width:94%;}
-.benefits{margin-top:26px; display:flex; flex-direction:column; gap:14px;}
+.left{flex:0 0 31%; display:flex; flex-direction:column; justify-content:center; min-width:0; position:relative;}
+.eyebrow{font-size:12px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--coral); margin-bottom:10px;}
+h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:700; color:var(--brown); line-height:.96; letter-spacing:-1px;}
+.divider{width:64px; height:3px; background:var(--gold); border-radius:3px; margin:18px 0 16px;}
+.lede{font-size:clamp(15px,1.5vw,18px); color:#6b6045; line-height:1.55; max-width:94%;}
+.benefits{margin-top:24px; display:flex; flex-direction:column; gap:14px;}
 .benefit{display:flex; align-items:center; gap:14px; font-size:clamp(14px,1.45vw,17px); color:var(--ink); font-weight:500;}
-.bdot{flex-shrink:0; width:30px; height:30px; border-radius:50%; background:#fff; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--coral);}
-.bdot svg{width:15px; height:15px;}
-.promo-tag{margin-top:30px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--coral); border-radius:13px; padding:14px 18px; align-self:flex-start; box-shadow:var(--shadow-sm);}
-.promo-tag .l1{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; font-weight:600;}
-.promo-tag .l2{font-size:16px; color:var(--ink); margin-top:4px;}
-.promo-tag b{color:var(--coral); font-weight:700;}
-.promo-tag .reg{text-decoration:line-through; color:#b3a890;}
-.promo-tag .pct{display:inline-block; margin-left:6px; font-size:14px; color:var(--coral); font-weight:700;}
+.bdot{flex-shrink:0; width:38px; height:38px; border-radius:50%; background:var(--brown); display:flex; align-items:center; justify-content:center; color:#efe7d2;}
+.bdot svg{width:18px; height:18px;}
+.wm{position:absolute; left:-2%; top:46%; transform:translateY(-50%); font-family:var(--serif); font-size:42vh; font-weight:800; color:var(--brown); opacity:.05; z-index:-1; line-height:1; pointer-events:none;}
 
 /* right canvas */
-.right{flex:1; display:flex; flex-direction:column; justify-content:center; gap:clamp(14px,2vh,22px); min-width:0; position:relative; z-index:2;}
-.wm{position:absolute; right:-2%; top:50%; transform:translateY(-50%); font-size:46vh; font-weight:800; color:var(--brown); opacity:.04; z-index:0; pointer-events:none; line-height:1; user-select:none;}
+.right{flex:1; display:flex; flex-direction:column; justify-content:center; gap:clamp(12px,1.8vh,20px); min-width:0;}
 
-.hero{position:relative; z-index:2;}
-.hero .label{font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--muted);}
-.hero .num{font-size:clamp(64px,10vw,128px); font-weight:800; color:var(--coral); line-height:.86; letter-spacing:-4px; margin-top:2px;}
-.hero .sub{font-size:clamp(14px,1.4vw,17px); color:#6b6045; margin-top:10px; min-height:22px;}
+.hero-eyebrow{display:flex; align-items:center; gap:16px; justify-content:center; color:var(--coral); font-size:12px; font-weight:600; letter-spacing:3px; text-transform:uppercase;}
+.hero-eyebrow::before,.hero-eyebrow::after{content:""; height:1px; flex:1; max-width:120px; background:#d8c4a0;}
+.hero-main{text-align:center;}
+.hero-main .row{display:flex; align-items:center; justify-content:center; gap:18px;}
+.hero-num{font-family:var(--serif); font-size:clamp(64px,10.5vw,128px); font-weight:800; color:var(--coral); line-height:.9; letter-spacing:-2px;}
+.hero-tot{text-align:left; font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--muted); line-height:1.3;}
+.hero-pill{display:inline-block; margin-top:12px; background:#fff; border:1px solid var(--line); border-radius:30px; padding:9px 20px; font-size:clamp(13px,1.4vw,16px); color:var(--ink); box-shadow:var(--shadow-sm);}
+.hero-pill b{color:var(--coral); font-weight:700;}
+.hero-pill .plus{color:var(--muted); margin:0 6px; font-weight:600;}
 
-.figs{display:flex; align-items:flex-end; gap:30px; flex-wrap:wrap; position:relative; z-index:2;}
-.fig .fl{font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:3px;}
-.fig .fv{font-size:clamp(30px,3.6vw,46px); font-weight:700; color:var(--brown); line-height:1;}
-.fig .fv .unit{font-size:.42em; font-weight:600; color:var(--muted); letter-spacing:.5px;}
-.fig .fs{font-size:13px; color:var(--muted); margin-top:4px; min-height:18px;}
-.fig .fs .strike{text-decoration:line-through;}
+/* comparison card */
+.compare{background:rgba(255,255,255,.7); border:1px solid var(--line); border-radius:20px; padding:clamp(16px,2vh,24px) clamp(20px,2.4vw,30px); display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:center; gap:clamp(10px,1.6vw,22px); box-shadow:var(--shadow-sm);}
+.cmp{ text-align:center; }
+.cmp .cl{font-size:11px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); margin-bottom:7px;}
+.cmp .cv{font-family:var(--serif); font-size:clamp(30px,4vw,50px); font-weight:700; color:var(--brown); line-height:1;}
+.cmp .cv.coral{color:var(--coral);}
+.cmp .cs{font-size:13px; color:var(--muted); margin-top:5px;}
+.cmp .cs .strike{text-decoration:line-through;}
+.vs{width:46px; height:46px; border-radius:50%; background:var(--brown); color:#efe7d2; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; letter-spacing:.5px;}
+.cmp-div{width:1px; align-self:stretch; background:var(--line);}
+.cmp-right{text-align:center;}
+.cmp-right .b1{font-size:11px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--muted);}
+.cmp-right .v1{font-family:var(--serif); font-size:clamp(20px,2.2vw,26px); font-weight:700; color:var(--coral); margin:2px 0 8px;}
+.cmp-right .b2{font-size:11px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--muted);}
+.cmp-right .v2{font-family:var(--serif); font-size:clamp(24px,2.6vw,32px); font-weight:700; color:var(--coral);}
 
-/* slider */
-.sliderwrap{position:relative; z-index:2; padding-top:34px;}
-.slider-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;}
-.slider-head .lbl{font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted);}
-.slider-head .bv{font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--coral);}
-.track{position:relative;}
-input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:12px; border-radius:12px; background:linear-gradient(var(--coral),var(--coral)) no-repeat, #e6dcc5; background-size:var(--fill,100%) 100%; outline:none; cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:36px; height:36px; border-radius:50%; background:var(--coral); border:4px solid #fff; box-shadow:0 6px 16px -4px rgba(168,84,60,.6); cursor:pointer; transition:transform .12s; margin-top:-12px;}
-input[type=range]:active::-webkit-slider-thumb{transform:scale(1.08);}
-input[type=range]::-moz-range-thumb{width:36px; height:36px; border-radius:50%; background:var(--coral); border:4px solid #fff; box-shadow:0 6px 16px -4px rgba(168,84,60,.6); cursor:pointer;}
-input[type=range]::-webkit-slider-runnable-track{height:12px; border-radius:12px;}
-.bubble{position:absolute; top:-2px; transform:translate(-50%,-100%); background:var(--brown); color:#fff; font-size:13px; font-weight:600; padding:6px 12px; border-radius:9px; white-space:nowrap; pointer-events:none; transition:left .08s linear;}
-.bubble::after{content:""; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%); border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--brown);}
-.ticks{display:flex; justify-content:space-between; margin-top:12px; padding:0 4px;}
-.tick{font-size:13px; font-weight:600; color:#a99d78; cursor:pointer; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:9px; transition:all .18s;}
-.tick.on{color:#fff; background:var(--brown);}
+/* selector */
+.sel-row{display:flex; align-items:center; gap:16px; flex-wrap:wrap;}
+.sel-row .sl{font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted);}
+.segtrack{display:flex; gap:4px; background:#fff; border:1px solid var(--line); border-radius:30px; padding:5px; flex:1; min-width:0; box-shadow:var(--shadow-sm);}
+.seg{flex:1; min-width:34px; border:none; background:transparent; font-family:inherit; font-size:16px; font-weight:600; color:#6b6045; padding:9px 4px; border-radius:24px; cursor:pointer; transition:all .2s;}
+.seg.on{background:var(--brown); color:#fff;}
+.bvtag{display:flex; align-items:center; gap:6px; background:var(--coral); color:#fff; font-size:11px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; padding:8px 14px; border-radius:30px; white-space:nowrap; opacity:0; transition:opacity .25s;}
+.bvtag.show{opacity:1;}
+.bvtag svg{width:13px; height:13px;}
 
 /* tier ladder */
-.ladder{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; position:relative; z-index:2;}
-.tier{position:relative; background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 16px 16px; text-align:center; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .18s, border-color .18s, box-shadow .18s;}
+.ladder{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+.tier{position:relative; background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px 14px 14px; display:flex; align-items:center; gap:14px; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .18s, border-color .18s, box-shadow .18s;}
 .tier:hover{transform:translateY(-2px);}
-.tier .cap{font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--muted);}
-.tier .per{font-size:clamp(26px,3vw,36px); font-weight:800; color:var(--brown); line-height:1; margin:7px 0 2px; letter-spacing:-1px;}
-.tier .per .u{font-size:.38em; font-weight:600; color:var(--muted);}
-.tier .sv{font-size:13px; color:var(--sage-ink); background:var(--sage); display:inline-block; padding:3px 11px; border-radius:20px; margin-top:8px; font-weight:600; min-height:24px;}
-.tier.active{border-color:var(--coral); background:#fff;}
-.tier.active::before{content:""; position:absolute; inset:0; border-radius:18px; box-shadow:0 0 0 2px var(--coral) inset; pointer-events:none;}
-.tier.best{border-color:var(--coral); transform:translateY(-8px); box-shadow:var(--shadow); padding-top:26px;}
-.tier.best:hover{transform:translateY(-11px);}
-.ribbon{position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:var(--coral); color:#fff; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:5px 14px; border-radius:20px; white-space:nowrap; box-shadow:var(--shadow-sm);}
+.tier .tic{flex-shrink:0; width:44px; height:44px; border-radius:50%; background:var(--brown); color:#efe7d2; display:flex; align-items:center; justify-content:center;}
+.tier .tic svg{width:22px; height:22px;}
+.tier.best .tic{background:var(--coral);}
+.tier .tbody{text-align:left; min-width:0;}
+.tier .tcap{font-size:10px; font-weight:600; letter-spacing:.6px; text-transform:uppercase; color:var(--muted);}
+.tier .tper{font-family:var(--serif); font-size:clamp(24px,2.8vw,34px); font-weight:700; color:var(--brown); line-height:1; margin:2px 0 1px;}
+.tier.best .tper{color:var(--coral);}
+.tier .tper .u{font-family:var(--sans); font-size:.4em; font-weight:600; color:var(--muted);}
+.tier .tsave{font-size:12px; color:var(--sage-ink); background:var(--sage); display:inline-block; padding:2px 9px; border-radius:20px; margin-top:5px; font-weight:600;}
+.tier.active{box-shadow:0 0 0 2px var(--coral) inset, var(--shadow-sm);}
+.tier.best{border-color:var(--coral); transform:translateY(-6px); box-shadow:var(--shadow);}
+.tier.best:hover{transform:translateY(-9px);}
+.tier.best.active{box-shadow:0 0 0 2px var(--coral) inset, var(--shadow);}
+.popular,.bestrib{position:absolute; top:-11px; left:50%; transform:translateX(-50%); font-size:10px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; padding:4px 12px; border-radius:20px; white-space:nowrap; box-shadow:var(--shadow-sm);}
+.popular{background:var(--cream); color:var(--muted); border:1px solid var(--line);}
+.bestrib{background:var(--coral); color:#fff;}
 
-/* confirm bar */
-.confirm{position:relative; z-index:2; background:var(--brown); color:#fff; border-radius:16px; padding:16px 24px; display:flex; justify-content:space-between; align-items:center; gap:16px; opacity:0; transform:translateY(10px); transition:all .4s ease;}
-.confirm.show{opacity:1; transform:translateY(0);}
-.confirm .ct{font-size:clamp(15px,1.5vw,18px); font-weight:500;}
-.confirm .cs{font-size:13px; color:var(--sage-ink); background:var(--sage); padding:7px 15px; border-radius:30px; font-weight:700; white-space:nowrap;}
+/* CTA bar */
+.ctabar{flex-shrink:0; margin:8px 40px 16px; background:var(--brown); border-radius:20px; padding:16px 26px; display:flex; align-items:center; gap:24px; z-index:2; box-shadow:var(--shadow);}
+.ctabar .gift{flex-shrink:0; width:52px; height:52px; border-radius:50%; border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; color:var(--gold);}
+.ctabar .gift svg{width:24px; height:24px;}
+.ctabar .cmeta{flex:1; min-width:0;}
+.ctabar .cmeta .t1{font-size:clamp(16px,1.7vw,20px); font-weight:600; color:#fff;}
+.ctabar .cmeta .t2{font-size:13px; color:#bcae8c; margin-top:2px;}
+.ctabar .csave{text-align:center; flex-shrink:0;}
+.ctabar .csave .l{font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--gold);}
+.ctabar .csave .v{font-family:var(--serif); font-size:clamp(22px,2.4vw,30px); font-weight:700; color:#fff; line-height:1.05;}
+.ctabar .csave .s{font-size:11px; color:#bcae8c; letter-spacing:.5px;}
+.cta-btn{flex-shrink:0; font-family:inherit; font-size:15px; font-weight:700; letter-spacing:.5px; padding:15px 26px; border:none; border-radius:14px; background:var(--gold); color:#3a2f0a; cursor:pointer; display:flex; align-items:center; gap:9px; transition:transform .12s, background .2s; box-shadow:0 8px 20px -8px rgba(200,162,76,.7);}
+.cta-btn:hover{background:var(--gold-deep);}
+.cta-btn:active{transform:scale(.97);}
+.cta-btn svg{width:16px; height:16px;}
+.cta-wrap{display:flex; flex-direction:column; align-items:center; gap:5px;}
+.cta-wrap .note{font-size:11px; color:#bcae8c;}
 
-.footer{background:var(--olive); color:#efe7d2; padding:12px 38px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; font-size:13px; flex-wrap:wrap; gap:8px;}
-.footer .cta{color:#f0c9a8; font-weight:600;}
-
-/* reveal animation */
 @keyframes fadeUp{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
-.client.active .reveal{opacity:0; animation:fadeUp .6s cubic-bezier(.2,.7,.2,1) forwards;}
-.client.active .d1{animation-delay:.05s;} .client.active .d2{animation-delay:.13s;}
-.client.active .d3{animation-delay:.21s;} .client.active .d4{animation-delay:.29s;}
-.client.active .d5{animation-delay:.37s;} .client.active .d6{animation-delay:.45s;}
+.client.active .reveal{opacity:0; animation:fadeUp .55s cubic-bezier(.2,.7,.2,1) forwards;}
+.client.active .d1{animation-delay:.04s;} .client.active .d2{animation-delay:.11s;}
+.client.active .d3{animation-delay:.18s;} .client.active .d4{animation-delay:.25s;}
+.client.active .d5{animation-delay:.32s;} .client.active .d6{animation-delay:.39s;}
+.client.active .d7{animation-delay:.46s;}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
-@media (max-width:1000px) and (orientation:landscape){
-  .stage{gap:24px; padding:6px 24px 14px;} .left{flex:0 0 34%;}
+@media (max-width:1100px) and (orientation:landscape){
+  .stage{gap:26px; padding:6px 24px 8px;} .left{flex:0 0 30%;} .ctabar{margin:6px 24px 12px;}
 }
 </style>
 </head>
@@ -222,13 +246,14 @@ input[type=range]::-webkit-slider-runnable-track{height:12px; border-radius:12px
     </button>
   </div>
   <div class="dash-body">
-    <div class="dash-title">Tap a price to edit. Changes save to this tablet automatically and update the client view. Set a promo to 0 if there is no current promo.</div>
+    <div class="dash-title">Set prices, turn a promo on or off, and choose how many sessions to offer this client. Then open the service for them.</div>
     <div id="svcRows"></div>
   </div>
 </div>
 
 <!-- ============ CLIENT SAVINGS ============ -->
 <div class="screen client" id="client">
+  <svg class="leaf" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="M95 5C60 8 30 22 16 48 8 63 6 80 8 95c1-14 6-29 16-43C40 30 66 16 95 5Z M52 44c-9 4-17 12-22 23 11-3 20-10 26-21 5-9 8-19 9-30-5 8-8 19-13 28Z"/></svg>
   <div class="topbar">
     <button class="back-btn" id="backBtn">
       <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -240,9 +265,23 @@ input[type=range]::-webkit-slider-runnable-track{height:12px; border-radius:12px
     <div class="left" id="left"></div>
     <div class="right" id="right"></div>
   </div>
-  <div class="footer">
-    <div>The more sessions you book, the more you save per visit.</div>
-    <div class="cta">Zeugma Spa &middot; 501 NE 31st St, Miami &middot; (305) 481-5659</div>
+  <div class="ctabar" id="ctabar">
+    <div class="gift"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+    <div class="cmeta">
+      <div class="t1" id="ctaTitle"></div>
+      <div class="t2">The best results. The best value.</div>
+    </div>
+    <div class="csave">
+      <div class="l">You save</div>
+      <div class="v" id="ctaSave">$0</div>
+      <div class="s" id="ctaWith"></div>
+    </div>
+    <div class="cta-wrap">
+      <button class="cta-btn" id="ctaBtn"><span id="ctaBtnText">Select sessions</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <div class="note">Lock in your savings today.</div>
+    </div>
   </div>
 </div>
 
@@ -251,37 +290,15 @@ input[type=range]::-webkit-slider-runnable-track{height:12px; border-radius:12px
   <div class="modal">
     <h2 id="modalTitle">Add service</h2>
     <div class="sub">This shows up on the dashboard and in the client savings view.</div>
-    <div class="field">
-      <label>Service name</label>
-      <input type="text" id="fName" placeholder="e.g. PRP Under Eye">
-    </div>
+    <div class="field"><label>Service name</label><input type="text" id="fName" placeholder="e.g. PRP Under Eye"></div>
     <div class="field-row">
-      <div class="field">
-        <label>Regular price</label>
-        <input type="number" id="fReg" inputmode="numeric" placeholder="550">
-      </div>
-      <div class="field">
-        <label>Promo price</label>
-        <input type="number" id="fPromo" inputmode="numeric" placeholder="290">
-        <div class="hint">Enter 0 if there is no current promo.</div>
-      </div>
+      <div class="field"><label>Regular price</label><input type="number" id="fReg" inputmode="numeric" placeholder="550"></div>
+      <div class="field"><label>Promo price</label><input type="number" id="fPromo" inputmode="numeric" placeholder="290"><div class="hint">Enter 0 if there is no current promo.</div></div>
     </div>
-    <div class="field">
-      <label>Short description</label>
-      <input type="text" id="fLede" placeholder="One calm, benefit-led line.">
-    </div>
-    <div class="field">
-      <label>Benefit 1</label>
-      <input type="text" id="fB1" placeholder="e.g. Brightens the under-eye area">
-    </div>
-    <div class="field">
-      <label>Benefit 2</label>
-      <input type="text" id="fB2" placeholder="optional">
-    </div>
-    <div class="field">
-      <label>Benefit 3</label>
-      <input type="text" id="fB3" placeholder="optional">
-    </div>
+    <div class="field"><label>Short description</label><input type="text" id="fLede" placeholder="One calm, benefit-led line."></div>
+    <div class="field"><label>Benefit 1</label><input type="text" id="fB1" placeholder="e.g. Brightens the under-eye area"></div>
+    <div class="field"><label>Benefit 2</label><input type="text" id="fB2" placeholder="optional"></div>
+    <div class="field"><label>Benefit 3</label><input type="text" id="fB3" placeholder="optional"></div>
     <div class="err" id="formErr"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" id="cancelBtn">Cancel</button>
@@ -305,15 +322,17 @@ const DEFAULTS = [
 ];
 const STORE_KEY = "zeugma_services";
 const LEGACY_KEY = "zeugma_prices";
+const MIN_SESS = 3, MAX_SESS = 12;
 
 const usd = n => "$" + Math.round(n).toLocaleString("en-US");
 const rateFor = q => q>=6 ? 0.15 : (q>=2 ? 0.10 : 0);
 const num = v => { const n = parseInt(v,10); return (isNaN(n)||n<0) ? 0 : n; };
+const clampSess = n => Math.min(MAX_SESS, Math.max(MIN_SESS, n||6));
 const effHasPromo = s => s.promoActive && s.promo>0 && s.promo<s.reg;
 const pctOff = s => Math.round((s.reg - s.promo)/s.reg*100);
 const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+const PEOPLE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
 
-// ---- data model ----
 function normalize(s){
   const reg = num(s.reg), promo = num(s.promo);
   const promoActive = (s.promoActive===undefined) ? (promo>0 && promo<reg) : !!s.promoActive;
@@ -321,6 +340,7 @@ function normalize(s){
     key: s.key || slugify(s.name||"service"),
     name: (s.name||"Service").toString().trim(),
     reg, promo, promoActive,
+    maxSessions: clampSess(num(s.maxSessions)),
     lede: (s.lede||"").toString(),
     benefits: Array.isArray(s.benefits) ? s.benefits.filter(b=>b&&b.trim()).slice(0,3) : []
   };
@@ -332,7 +352,6 @@ function loadServices(){
     const raw = JSON.parse(localStorage.getItem(STORE_KEY)||"null");
     if(Array.isArray(raw) && raw.length) return raw.map(normalize);
   }catch(e){}
-  // one-time migration from the old price-only storage
   try{
     const legacy = JSON.parse(localStorage.getItem(LEGACY_KEY)||"null");
     if(Array.isArray(legacy)){
@@ -372,6 +391,14 @@ function buildDashboard(){
         <div class="pf-head"><button class="check toggle ${s.promoActive?'on':''}" data-toggle="${s.key}" title="Turn promo on or off">${CHECK_SVG}</button><label>Promo price</label><span class="pct-badge">${effHasPromo(s)?pctOff(s)+'% off':''}</span></div>
         <div class="price-input promo ${s.promoActive?'':'dim'}"><span>$</span><input type="number" inputmode="numeric" data-key="${s.key}" data-field="promo" value="${s.promo}"></div>
       </div>
+      <div class="sess-field">
+        <label>Sessions</label>
+        <div class="stepper">
+          <button class="step" data-key="${s.key}" data-step="-1">&#8722;</button>
+          <span class="sess-val" data-sess="${s.key}">${s.maxSessions}</span>
+          <button class="step" data-key="${s.key}" data-step="1">+</button>
+        </div>
+      </div>
       <span class="saved-pill">Saved</span>
       <div class="row-tools">
         <button class="icon-btn" data-edit="${s.key}" title="Edit details">
@@ -398,15 +425,23 @@ function buildDashboard(){
       refreshRowMeta(row, s);
     });
   });
+  wrap.querySelectorAll(".step").forEach(b=> b.addEventListener("click",()=>stepSessions(b.dataset.key, +b.dataset.step)) );
   wrap.querySelectorAll("[data-toggle]").forEach(b=> b.addEventListener("click",()=>togglePromo(b.dataset.toggle)) );
   wrap.querySelectorAll(".open-btn").forEach(b=> b.addEventListener("click",()=>openClient(b.dataset.open)) );
   wrap.querySelectorAll("[data-edit]").forEach(b=> b.addEventListener("click",()=>openModal(b.dataset.edit)) );
   wrap.querySelectorAll("[data-remove]").forEach(b=> b.addEventListener("click",()=>removeService(b.dataset.remove)) );
 }
+function esc(str){ return (str||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function refreshRowMeta(row, s){
   row.querySelector(".svc-name").innerHTML = esc(s.name) + (effHasPromo(s)?"":'<span class="nopromo">No promo</span>');
   const badge = row.querySelector(".pct-badge");
   if(badge) badge.textContent = effHasPromo(s) ? pctOff(s)+"% off" : "";
+}
+function stepSessions(key, d){
+  const s = services.find(x=>x.key===key);
+  s.maxSessions = clampSess((s.maxSessions||6)+d);
+  saveServices(services);
+  const el = document.querySelector('[data-sess="'+key+'"]'); if(el) el.textContent = s.maxSessions;
 }
 function togglePromo(key){
   const s = services.find(x=>x.key===key);
@@ -414,9 +449,8 @@ function togglePromo(key){
   saveServices(services);
   buildDashboard();
 }
-function esc(str){ return (str||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
-// ---- MODAL (add / edit) ----
+// ---- MODAL ----
 let editingKey = null;
 function openModal(key){
   editingKey = key || null;
@@ -446,7 +480,7 @@ function saveFromModal(){
   };
   if(editingKey){
     const s = services.find(x=>x.key===editingKey);
-    Object.assign(s, normalize({...data, key:s.key, promoActive:s.promoActive}));
+    Object.assign(s, normalize({...data, key:s.key, promoActive:s.promoActive, maxSessions:s.maxSessions}));
   }else{
     services.push(normalize({...data, key:slugify(name)}));
   }
@@ -470,7 +504,7 @@ function showScreen(id){
 }
 function openClient(key){
   current = services.find(s=>s.key===key) || services[0];
-  sessions = 6;
+  sessions = current.maxSessions;
   showScreen("client");
   selectService(current);
 }
@@ -479,104 +513,101 @@ document.getElementById("addBtn").addEventListener("click",()=>openModal(null));
 document.getElementById("saveBtn").addEventListener("click",saveFromModal);
 document.getElementById("cancelBtn").addEventListener("click",closeModal);
 document.getElementById("modalBack").addEventListener("click",e=>{ if(e.target.id==="modalBack") closeModal(); });
+document.getElementById("ctaBtn").addEventListener("click",e=>{ const b=e.currentTarget; b.style.transform="scale(.97)"; setTimeout(()=>b.style.transform="",140); });
 
 // ---- CALC ----
 function calc(s, q){
   const rate = rateFor(q);
   const hasPromo = effHasPromo(s);
   const base = hasPromo ? s.promo : s.reg;
-  const gross = base*q;
-  const packageTotal = gross*(1-rate);
+  const regGross = s.reg*q;
+  const packageTotal = base*q*(1-rate);
   const perSession = packageTotal/q;
-  const packageSave = gross - packageTotal;
+  const packageSave = base*q - packageTotal;
   const promoSave = hasPromo ? (s.reg - s.promo)*q : 0;
-  const totalSave = promoSave + packageSave;
-  return {rate,hasPromo,base,gross,packageTotal,perSession,packageSave,promoSave,totalSave};
+  const totalSave = regGross - packageTotal;
+  return {rate,hasPromo,base,regGross,packageTotal,perSession,packageSave,promoSave,totalSave};
 }
 
 // ---- LEFT RAIL ----
 function buildLeft(s){
-  const c = calc(s,sessions);
-  const promoBlock = c.hasPromo
-    ? `<div class="promo-tag reveal d5"><div class="l1">Today's promo</div>
-         <div class="l2"><span class="reg">${usd(s.reg)}</span> to <b>${usd(s.promo)}</b>, you save ${usd(s.reg-s.promo)} <span class="pct">${pctOff(s)}% off</span></div></div>`
-    : `<div class="promo-tag reveal d5"><div class="l1">Per session</div>
-         <div class="l2"><b>${usd(s.reg)}</b> single session price</div></div>`;
   const bullets = s.benefits.length
-    ? `<div class="benefits reveal d4">${s.benefits.map(b=>`<div class="benefit"><span class="bdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>${esc(b)}</div>`).join("")}</div>`
+    ? `<div class="benefits reveal d4">${s.benefits.map(b=>`<div class="benefit"><span class="bdot">${CHECK_SVG}</span>${esc(b)}</div>`).join("")}</div>`
     : "";
   document.getElementById("left").innerHTML = `
-    <div class="eyebrow reveal d1">Your savings, today</div>
-    <h1 class="svc reveal d2">${esc(s.name)}</h1>
-    ${s.lede?`<p class="lede reveal d3">${esc(s.lede)}</p>`:""}
-    ${bullets}
-    ${promoBlock}`;
+    <div class="wm">${esc((s.name||"Z").trim().charAt(0).toUpperCase())}</div>
+    <div class="eyebrow reveal d1">Treatment</div>
+    <h1 class="svc reveal d1">${esc(s.name)}</h1>
+    <div class="divider reveal d2"></div>
+    ${s.lede?`<p class="lede reveal d2">${esc(s.lede)}</p>`:""}
+    ${bullets}`;
 }
 
 // ---- RIGHT CANVAS ----
 function buildRight(s){
+  const max = s.maxSessions;
+  const cells = Array.from({length:max},(_,i)=>i+1).map(n=>`<button class="seg" data-n="${n}">${n}</button>`).join("");
   document.getElementById("right").innerHTML = `
-    <div class="wm" id="wm">${esc((s.name||"Z").trim().charAt(0).toUpperCase())}</div>
-    <div class="hero reveal d2">
-      <div class="label" id="heroLabel">Package savings</div>
-      <div class="num" id="heroNum">$0</div>
-      <div class="sub" id="heroSub"></div>
+    <div class="hero-eyebrow reveal d1">Your personalized savings</div>
+    <div class="hero-main reveal d2">
+      <div class="row"><span class="hero-num" id="heroNum">$0</span><span class="hero-tot">Total<br>savings</span></div>
+      <div class="hero-pill" id="heroPill"></div>
     </div>
-    <div class="figs reveal d3">
-      <div class="fig">
-        <div class="fl">Per session</div>
-        <div class="fv"><span id="vPer">$0</span> <span class="unit">/ session</span></div>
-        <div class="fs" id="sPer"></div>
+    <div class="compare reveal d3">
+      <div class="cmp">
+        <div class="cl">Regular price (<span id="cmpQ1">6</span> sessions)</div>
+        <div class="cv" id="cmpReg">$0</div>
+        <div class="cs"><span class="strike" id="cmpRegPer"></span></div>
       </div>
-      <div class="fig">
-        <div class="fl">Package total</div>
-        <div class="fv" id="vTotal">$0</div>
-        <div class="fs"><span class="strike" id="sTotal"></span></div>
+      <div class="vs">VS</div>
+      <div class="cmp">
+        <div class="cl">Your <span id="cmpQ2">6</span>-session package</div>
+        <div class="cv coral" id="cmpPkg">$0</div>
+        <div class="cs" id="cmpPkgPer"></div>
+      </div>
+      <div class="cmp-div"></div>
+      <div class="cmp-right">
+        <div class="b1">Package savings</div>
+        <div class="v1" id="cmpPkgSave">$0</div>
+        <div class="b2">Total savings</div>
+        <div class="v2" id="cmpTotSave">$0</div>
       </div>
     </div>
-    <div class="sliderwrap reveal d4">
-      <div class="slider-head">
-        <span class="lbl">Drag to choose sessions</span>
-        <span class="bv" id="bvLabel"></span>
-      </div>
-      <div class="track">
-        <div class="bubble" id="bubble"><span id="sessOut">6</span> sessions</div>
-        <input type="range" id="slider" min="1" max="6" step="1" value="6">
-      </div>
-      <div class="ticks" id="ticks"></div>
+    <div class="sel-row reveal d4">
+      <span class="sl">Choose your sessions</span>
+      <div class="segtrack" id="segtrack">${cells}</div>
+      <span class="bvtag" id="bvtag"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 9 17 14 19 22 12 17 5 22 7 14 2 9 9 9"/></svg>Best value</span>
     </div>
-    <div class="ladder reveal d5" id="ladder"></div>
-    <div class="confirm reveal d6" id="confirm">
-      <span class="ct" id="confirmText"></span>
-      <span class="cs" id="confirmSave"></span>
-    </div>`;
+    <div class="ladder reveal d5" id="ladder"></div>`;
 
-  const ticks = document.getElementById("ticks");
-  ticks.innerHTML = [1,2,3,4,5,6].map(n=>`<span class="tick" data-n="${n}">${n}</span>`).join("");
-  ticks.querySelectorAll(".tick").forEach(t=>t.addEventListener("click",()=>setSessions(+t.dataset.n)));
-  document.getElementById("slider").addEventListener("input",e=>setSessions(+e.target.value));
+  document.getElementById("segtrack").querySelectorAll(".seg").forEach(b=>b.addEventListener("click",()=>setSessions(+b.dataset.n)));
   buildLadder(s);
 }
 
+function popularCount(max){ return Math.min(Math.max(2, Math.round(max*0.6)), max-1); }
+
 function buildLadder(s){
+  const max = s.maxSessions;
   const tiers = [
-    {n:1, cap:"Single"},
-    {n:3, cap:"Popular"},
-    {n:6, cap:"Best value", best:true}
+    {n:1, cap:"Single", tag:""},
+    {n:popularCount(max), cap:"Sessions", tag:"popular"},
+    {n:max, cap:"Sessions", tag:"best", best:true}
   ];
   document.getElementById("ladder").innerHTML = tiers.map(t=>{
     const c = calc(s,t.n);
-    const sv = c.totalSave>0 ? "Save "+usd(c.totalSave) : "&nbsp;";
+    const sv = c.totalSave>0 ? "Save "+usd(c.totalSave) : "Single visit";
+    const rib = t.tag==="popular" ? '<div class="popular">Popular</div>' : (t.tag==="best" ? '<div class="bestrib">Best value</div>' : '');
     return `<div class="tier${t.best?" best":""}" data-n="${t.n}">
-      ${t.best?'<div class="ribbon">Best value</div>':''}
-      <div class="cap">${t.cap}</div>
-      <div class="per">${usd(c.perSession)}<span class="u">/ea</span></div>
-      <div class="sv">${sv}</div>
+      ${rib}
+      <div class="tic">${PEOPLE_SVG}</div>
+      <div class="tbody">
+        <div class="tcap">${t.n} ${t.n===1?"session":"sessions"}</div>
+        <div class="tper">${usd(c.perSession)}<span class="u">/ea</span></div>
+        <div class="tsave">${sv}</div>
+      </div>
     </div>`;
   }).join("");
-  document.getElementById("ladder").querySelectorAll(".tier").forEach(el=>{
-    el.addEventListener("click",()=>setSessions(+el.dataset.n));
-  });
+  document.getElementById("ladder").querySelectorAll(".tier").forEach(el=>el.addEventListener("click",()=>setSessions(+el.dataset.n)));
 }
 
 // ---- count up ----
@@ -584,7 +615,7 @@ let animRAF=null;
 function animateNum(el,to){
   cancelAnimationFrame(animRAF);
   const from = parseInt((el.textContent||"0").replace(/[^0-9]/g,""))||0;
-  const start=performance.now(), dur=480;
+  const start=performance.now(), dur=520;
   (function step(now){
     const p=Math.min((now-start)/dur,1), e=1-Math.pow(1-p,3);
     el.textContent = usd(from+(to-from)*e);
@@ -592,79 +623,58 @@ function animateNum(el,to){
   })(performance.now());
 }
 
-function setSessions(q){
-  sessions = q;
-  document.getElementById("slider").value = q;
-  update();
-}
-
-function positionBubble(){
-  const sl=document.getElementById("slider"); if(!sl) return;
-  const pct=(sessions-1)/5;
-  sl.style.setProperty("--fill", (pct*100)+"%");
-  const w=sl.offsetWidth, thumb=36;
-  const x = pct*(w-thumb)+thumb/2;
-  const b=document.getElementById("bubble"); if(b) b.style.left = x+"px";
-}
+function setSessions(q){ sessions=q; update(); }
 
 function update(){
-  const s=current, q=sessions;
-  const c=calc(s,q);
+  const s=current, q=sessions, c=calc(s,q);
+  const top = (rateFor(q) >= rateFor(s.maxSessions)) && q>=s.maxSessions;
 
-  document.getElementById("sessOut").textContent=q;
-  document.querySelectorAll(".tick").forEach(t=>t.classList.toggle("on",+t.dataset.n===q));
-  positionBubble();
+  // selector
+  document.querySelectorAll(".seg").forEach(b=>b.classList.toggle("on",+b.dataset.n===q));
+  document.getElementById("bvtag").classList.toggle("show", q===s.maxSessions);
 
   // hero
-  const heroLabel=document.getElementById("heroLabel");
-  const heroSub=document.getElementById("heroSub");
+  const heroNum=document.getElementById("heroNum"), heroPill=document.getElementById("heroPill");
   if(c.totalSave>0){
-    heroLabel.textContent = c.hasPromo ? "You save in total" : "You save with a package";
-    animateNum(document.getElementById("heroNum"), c.totalSave);
+    animateNum(heroNum, c.totalSave);
     if(c.hasPromo && c.packageSave>0){
-      heroSub.textContent = usd(c.promoSave)+" off the regular price, plus "+usd(c.packageSave)+" in package savings.";
+      heroPill.innerHTML = '<b>'+usd(c.promoSave)+'</b> off the regular price<span class="plus">+</span><b>'+usd(c.packageSave)+'</b> in package savings';
     }else if(c.hasPromo){
-      heroSub.textContent = "off the regular price of "+usd(s.reg*q)+" for "+q+(q===1?" session.":" sessions.");
+      heroPill.innerHTML = '<b>'+usd(c.promoSave)+'</b> off the regular price';
     }else{
-      heroSub.textContent = (c.rate*100)+"% off when you book "+q+" sessions.";
+      heroPill.innerHTML = '<b>'+(c.rate*100)+'%</b> off when you book '+q+' sessions';
     }
   }else{
-    heroLabel.textContent = "Per session price";
-    document.getElementById("heroNum").textContent = usd(c.perSession);
-    heroSub.textContent = "Add a session to unlock package savings.";
+    heroNum.textContent = usd(c.perSession);
+    heroPill.innerHTML = 'Add a session to unlock package savings';
   }
 
-  // figures
-  document.getElementById("vPer").textContent = usd(c.perSession);
-  document.getElementById("sPer").innerHTML = c.rate>0 ? '<span class="strike">'+usd(c.base)+'</span> at single price' : "single session price";
-  document.getElementById("vTotal").textContent = usd(c.packageTotal);
-  document.getElementById("sTotal").textContent = c.packageSave>0 ? usd(c.gross) : "";
+  // comparison
+  document.getElementById("cmpQ1").textContent = q;
+  document.getElementById("cmpQ2").textContent = q;
+  document.getElementById("cmpReg").textContent = usd(c.regGross);
+  document.getElementById("cmpRegPer").textContent = usd(s.reg)+" per session";
+  document.getElementById("cmpPkg").textContent = usd(c.packageTotal);
+  document.getElementById("cmpPkgPer").textContent = usd(c.perSession)+" per session";
+  document.getElementById("cmpPkgSave").textContent = usd(c.packageSave);
+  document.getElementById("cmpTotSave").textContent = usd(c.totalSave);
 
-  // best value label by slider
-  document.getElementById("bvLabel").textContent = q===6 ? "Best value, 15% off" : (c.rate>0 ? (c.rate*100)+"% off" : "");
-
-  // ladder active highlight
+  // ladder active
   document.querySelectorAll(".tier").forEach(el=>el.classList.toggle("active",+el.dataset.n===q));
 
-  // confirm bar
-  const cf=document.getElementById("confirm");
-  if(q>=2 && c.totalSave>0){
-    cf.classList.add("show");
-    document.getElementById("confirmText").innerHTML = `${esc(s.name)} &middot; ${q} session package`;
-    document.getElementById("confirmSave").textContent = "Saves "+usd(c.totalSave)+" total";
-  }else{
-    cf.classList.remove("show");
-  }
+  // CTA bar
+  document.getElementById("ctaTitle").textContent = s.name+". "+q+"-session package.";
+  document.getElementById("ctaSave").textContent = c.totalSave>0 ? usd(c.totalSave) : usd(c.perSession);
+  document.getElementById("ctaWith").textContent = c.totalSave>0 ? ("with "+q+(q===1?" session":" sessions")) : "per session";
+  document.getElementById("ctaBtnText").textContent = "Select "+q+(q===1?" session":" sessions");
 }
 
 function selectService(s){
-  current=s; sessions=6;
+  current=s; sessions=s.maxSessions;
   buildLeft(s); buildRight(s);
   document.getElementById("heroNum").textContent="$0";
-  requestAnimationFrame(()=>{ update(); });
+  requestAnimationFrame(()=>update());
 }
-
-window.addEventListener("resize",()=>{ if(document.getElementById("client").classList.contains("active")) positionBubble(); });
 
 buildDashboard();
 </script>
