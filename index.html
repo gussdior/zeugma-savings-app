@@ -324,6 +324,7 @@ const DEFAULTS = [
 const STORE_KEY = "zeugma_services";
 const LEGACY_KEY = "zeugma_prices";
 const MIN_SESS = 3, MAX_SESS = 12;
+const WHATSAPP_NUMBER = "12393834355";
 
 const usd = n => "$" + Math.round(n).toLocaleString("en-US");
 const comma = n => Math.round(n).toLocaleString("en-US");
@@ -515,7 +516,15 @@ document.getElementById("addBtn").addEventListener("click",()=>openModal(null));
 document.getElementById("saveBtn").addEventListener("click",saveFromModal);
 document.getElementById("cancelBtn").addEventListener("click",closeModal);
 document.getElementById("modalBack").addEventListener("click",e=>{ if(e.target.id==="modalBack") closeModal(); });
-document.getElementById("ctaBtn").addEventListener("click",e=>{ const b=e.currentTarget; b.style.transform="scale(.97)"; setTimeout(()=>b.style.transform="",140); });
+function bookWhatsApp(){
+  const s=current, q=sessions, c=calc(s,q);
+  let msg = "Hi Zeugma Spa, I would like to book the "+s.name+" "+q+"-session package.";
+  msg += c.totalSave>0
+    ? " Package total "+usd(c.packageTotal)+", saving "+usd(c.totalSave)+" total ("+usd(c.perSession)+" per session)."
+    : " "+usd(c.packageTotal)+" for "+q+(q===1?" session.":" sessions.");
+  window.open("https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg), "_blank");
+}
+document.getElementById("ctaBtn").addEventListener("click",e=>{ const b=e.currentTarget; b.style.transform="scale(.97)"; setTimeout(()=>b.style.transform="",140); bookWhatsApp(); });
 
 // ---- CALC ----
 function calc(s, q){
