@@ -1,0 +1,7 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local Claude Code editor config (machine-specific, not part of the app)
+.claude/

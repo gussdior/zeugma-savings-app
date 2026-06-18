@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Zeugma · Package Savings</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --olive:#4A3C0E; --brown:#3D3416; --sand:#E5DFD2; --cream:#EFEAE0;
+  --coral:#C0664A; --sage:#E2EAD9; --sage-ink:#51662f; --ink:#3A3320; --muted:#8a7f63;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{font-family:'Poppins',sans-serif; background:var(--sand); color:var(--ink); overflow:hidden; -webkit-user-select:none;}
+.screen{height:100vh; display:none; flex-direction:column;}
+.screen.active{display:flex;}
+
+/* ---------- DASHBOARD ---------- */
+.dash-head{background:var(--olive); color:#efe7d2; padding:18px 30px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center;}
+.dash-head .b{font-size:18px; font-weight:600; letter-spacing:4px;}
+.dash-head .s{font-size:10px; letter-spacing:2px; color:#bcae8c;}
+.dash-head .hint{font-size:13px; color:#d8c9a8;}
+.dash-body{flex:1; overflow-y:auto; padding:24px 30px;}
+.dash-title{font-size:15px; color:var(--muted); margin-bottom:16px; font-weight:500;}
+.svc-row{background:#fff; border:1px solid #e2d8c2; border-radius:16px; padding:18px 22px; margin-bottom:14px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;}
+.svc-name{flex:1 1 160px; font-size:19px; font-weight:600; color:var(--brown);}
+.price-field{display:flex; flex-direction:column; gap:4px;}
+.price-field label{font-size:11px; color:var(--muted); font-weight:500; text-transform:uppercase; letter-spacing:.5px;}
+.price-input{display:flex; align-items:center; background:var(--cream); border:1px solid #d8cdb6; border-radius:10px; padding:0 12px; width:120px;}
+.price-input span{color:var(--muted); font-weight:600;}
+.price-input input{border:none; background:transparent; font-family:inherit; font-size:17px; font-weight:600; color:var(--brown); width:100%; padding:10px 4px; outline:none;}
+.price-input.promo{border-color:var(--coral); background:#fbf1ec;}
+.price-input.promo input{color:var(--coral);}
+.open-btn{font-family:inherit; font-size:14px; font-weight:600; padding:12px 20px; border:none; border-radius:10px; background:var(--brown); color:#fff; cursor:pointer; transition:transform .15s;}
+.open-btn:active{transform:scale(.96);}
+.saved-pill{font-size:12px; color:var(--sage-ink); background:var(--sage); padding:5px 12px; border-radius:20px; opacity:0; transition:opacity .3s;}
+.saved-pill.show{opacity:1;}
+
+/* ---------- CLIENT SAVINGS ---------- */
+.tabs{display:flex; gap:10px; padding:16px 30px 8px; flex-shrink:0; overflow-x:auto; align-items:center;}
+.back-btn{font-family:inherit; font-size:14px; font-weight:600; padding:10px 16px; border:1px solid #c9bda3; border-radius:30px; background:#fff; color:var(--brown); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px;}
+.tab{font-family:inherit; font-size:15px; font-weight:600; padding:11px 22px; border:1px solid #c9bda3; border-radius:30px; background:transparent; color:#6b6045; cursor:pointer; white-space:nowrap; transition:all .25s ease;}
+.tab.active{background:var(--brown); color:#fff; border-color:var(--brown);}
+.client-svc-name{font-size:16px; font-weight:600; color:var(--brown); letter-spacing:.5px;}
+
+.stage{flex:1; display:flex; padding:4px 30px 16px; gap:26px; min-height:0;}
+.left{flex:0 0 35%; display:flex; flex-direction:column; justify-content:center;}
+h1{font-size:clamp(36px,5vw,60px); font-weight:700; color:var(--brown); line-height:1;}
+.lede{font-size:clamp(15px,1.7vw,18px); color:#6b6045; margin-top:12px; line-height:1.5; max-width:92%;}
+.benefits{margin-top:22px; display:flex; flex-direction:column; gap:12px;}
+.benefit{display:flex; align-items:center; gap:13px; font-size:clamp(14px,1.6vw,17px); color:var(--ink); font-weight:500;}
+.bdot{flex-shrink:0; width:30px; height:30px; border-radius:50%; background:var(--cream); border:1px solid #d8cdb6; display:flex; align-items:center; justify-content:center; color:var(--coral); font-size:15px; font-weight:700;}
+.promo-tag{margin-top:24px; background:var(--cream); border:1px solid #d8cdb6; border-left:3px solid var(--coral); border-radius:10px; padding:13px 16px; align-self:flex-start;}
+.promo-tag .pt-line1{font-size:13px; color:var(--muted);}
+.promo-tag .pt-line2{font-size:15px; color:var(--ink); margin-top:2px;}
+.promo-tag b{color:var(--coral); font-weight:600;}
+.promo-tag .reg{text-decoration:line-through; color:#b3a890;}
+
+.right{flex:1; display:flex; flex-direction:column; justify-content:center; min-width:0;}
+.hero{background:var(--brown); border-radius:22px; padding:clamp(18px,2.4vw,28px) clamp(22px,2.8vw,32px); margin-bottom:16px;}
+.hero-top{display:flex; justify-content:space-between; align-items:flex-start; gap:18px; margin-bottom:16px;}
+.hero-label{color:#d8c9a8; font-size:clamp(12px,1.3vw,15px); font-weight:500; letter-spacing:1px; text-transform:uppercase;}
+.hero-num{color:#fff; font-size:clamp(48px,7.5vw,86px); font-weight:700; line-height:.95; letter-spacing:-2px;}
+.hero-sub{color:#bcae8c; font-size:13px; margin-top:6px;}
+.hero-right{text-align:right; flex-shrink:0; padding-top:4px;}
+.hero-right .q{color:#d8c9a8; font-size:13px;}
+.hero-right .t{color:#f0c9a8; font-size:clamp(16px,1.9vw,21px); font-weight:600; margin-top:2px;}
+.hero-right .p{color:#bcae8c; font-size:13px; margin-top:6px;}
+
+.slider-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;}
+.slider-head .lbl{color:#d8c9a8; font-size:13px; font-weight:500; letter-spacing:1px; text-transform:uppercase;}
+.slider-head .val{color:#fff; font-size:18px; font-weight:600;}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:8px; border-radius:8px; background:#5c5128; outline:none; cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; appearance:none; width:30px; height:30px; border-radius:50%; background:var(--coral); border:3px solid #fff; cursor:pointer;}
+input[type=range]::-moz-range-thumb{width:30px; height:30px; border-radius:50%; background:var(--coral); cursor:pointer; border:3px solid #fff;}
+.ticks{display:flex; justify-content:space-between; margin-top:8px; padding:0 2px;}
+.tick{color:#9c8f6a; font-size:12px; font-weight:500; cursor:pointer; padding:2px 6px; border-radius:6px; transition:all .2s;}
+.tick.on{color:#fff; background:#5c5128;}
+
+.summary{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+.metric{background:#fff; border:1px solid #e2d8c2; border-radius:16px; padding:clamp(14px,1.8vw,20px); text-align:center;}
+.metric.best{border:2px solid var(--coral);}
+.metric .ml{font-size:13px; color:var(--muted); font-weight:500; margin-bottom:6px;}
+.metric .mv{font-size:clamp(24px,3.4vw,38px); font-weight:700; color:var(--brown); line-height:1;}
+.metric .mv.coral{color:var(--coral);}
+.metric .ms{font-size:12px; color:var(--muted); margin-top:6px; min-height:16px;}
+.metric .strike{font-size:13px; color:#b3a890; text-decoration:line-through;}
+
+.confirm{margin-top:14px; background:var(--coral); color:#fff; border-radius:14px; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; font-size:clamp(14px,1.6vw,17px); font-weight:500; opacity:0; transform:translateY(8px); transition:all .35s ease;}
+.confirm.show{opacity:1; transform:translateY(0);}
+.confirm b{font-weight:700;}
+
+.footer{background:var(--olive); color:#efe7d2; padding:11px 30px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; font-size:13px; flex-wrap:wrap; gap:8px;}
+.footer .cta{color:#f0c9a8; font-weight:600;}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
+@media (max-width:860px){ .stage{flex-direction:column; overflow-y:auto;} .left{flex:none;} }
+</style>
+</head>
+<body>
+
+<!-- ============ DASHBOARD ============ -->
+<div class="screen active" id="dash">
+  <div class="dash-head">
+    <div><div class="b">ZEUGMA SPA</div><div class="s">PRICING DASHBOARD</div></div>
+    <div class="hint">Set the current promo price, then open a service for the client</div>
+  </div>
+  <div class="dash-body">
+    <div class="dash-title">Tap a price to edit. Changes save automatically and update the client view.</div>
+    <div id="svcRows"></div>
+  </div>
+</div>
+
+<!-- ============ CLIENT SAVINGS ============ -->
+<div class="screen" id="client">
+  <div class="tabs" id="tabs">
+    <button class="back-btn" id="backBtn">&#8592; Dashboard</button>
+    <div class="client-svc-name" id="clientSvcName"></div>
+  </div>
+  <div class="stage">
+    <div class="left" id="left"></div>
+    <div class="right" id="right"></div>
+  </div>
+  <div class="footer">
+    <div>The more sessions you book, the more you save per visit</div>
+    <div class="cta">Zeugma Spa &middot; 501 NE 31st St, Miami &middot; (305) 481-5659</div>
+  </div>
+</div>
+
+<script>
+const DEFAULTS = [
+  { key:"ezgel",  name:"EZ Gel",            reg:1300, promo:749, lede:"Natural, smoother looking skin \u2014 with no filler.",
+    benefits:["Collagen-boosting","No synthetic filler","Subtle, natural results"] },
+  { key:"vivace", name:"Vivace",            reg:850,  promo:449, lede:"Smoother, firmer looking skin and a refreshed glow.",
+    benefits:["Tightens & firms","Minimal downtime","Radiant, even tone"] },
+  { key:"prph",   name:"PRP Hair",          reg:549,  promo:299, lede:"Support healthier, fuller looking hair, naturally.",
+    benefits:["Uses your own plasma","Stimulates growth","Thicker, fuller look"] },
+  { key:"hydra",  name:"Hydrafacial",       reg:250,  promo:179, lede:"Refreshed, glowing, deeply hydrated skin.",
+    benefits:["Deep cleanse & hydrate","Instant glow","Zero downtime"] },
+  { key:"prpmn",  name:"PRP Microneedling", reg:540,  promo:349, lede:"Smoother, refreshed, rejuvenated skin.",
+    benefits:["Boosts collagen","Refines texture","Natural rejuvenation"] },
+];
+const usd = n => "$" + Math.round(n).toLocaleString("en-US");
+const rateFor = q => q>=6 ? 0.15 : (q>=2 ? 0.10 : 0);
+
+// ---- load / save prices ----
+function loadServices(){
+  try{
+    const saved = JSON.parse(localStorage.getItem("zeugma_prices")||"null");
+    if(saved){
+      return DEFAULTS.map(d=>{
+        const s = saved.find(x=>x.key===d.key);
+        return s ? {...d, reg:s.reg, promo:s.promo} : d;
+      });
+    }
+  }catch(e){}
+  return DEFAULTS.map(d=>({...d}));
+}
+function savePrices(svcs){
+  try{ localStorage.setItem("zeugma_prices", JSON.stringify(svcs.map(s=>({key:s.key,reg:s.reg,promo:s.promo})))); }catch(e){}
+}
+
+let services = loadServices();
+let current = services[0];
+let sessions = 6;
+
+// ---- DASHBOARD ----
+function buildDashboard(){
+  const wrap = document.getElementById("svcRows");
+  wrap.innerHTML = services.map(s=>`
+    <div class="svc-row" data-key="${s.key}">
+      <div class="svc-name">${s.name}</div>
+      <div class="price-field">
+        <label>Regular price</label>
+        <div class="price-input"><span>$</span><input type="number" inputmode="numeric" data-key="${s.key}" data-field="reg" value="${s.reg}"></div>
+      </div>
+      <div class="price-field">
+        <label>Promo price</label>
+        <div class="price-input promo"><span>$</span><input type="number" inputmode="numeric" data-key="${s.key}" data-field="promo" value="${s.promo}"></div>
+      </div>
+      <span class="saved-pill">Saved</span>
+      <button class="open-btn" data-open="${s.key}">Open for client &#8594;</button>
+    </div>`).join("");
+
+  wrap.querySelectorAll("input").forEach(inp=>{
+    inp.addEventListener("input",e=>{
+      const s = services.find(x=>x.key===e.target.dataset.key);
+      const v = parseInt(e.target.value)||0;
+      s[e.target.dataset.field] = v;
+      savePrices(services);
+      const pill = e.target.closest(".svc-row").querySelector(".saved-pill");
+      pill.classList.add("show");
+      clearTimeout(pill._t); pill._t=setTimeout(()=>pill.classList.remove("show"),1200);
+    });
+  });
+
+  wrap.querySelectorAll(".open-btn").forEach(b=>{
+    b.addEventListener("click",()=>openClient(b.dataset.open));
+  });
+}
+
+// ---- SCREEN SWITCH ----
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+function openClient(key){
+  current = services.find(s=>s.key===key);
+  sessions = 6;
+  document.getElementById("clientSvcName").textContent = current.name;
+  showScreen("client");
+  selectService(current);
+}
+document.getElementById("backBtn").addEventListener("click",()=>{ buildDashboard(); showScreen("dash"); });
+
+function buildLeft(s){
+  const promoSave = s.reg - s.promo;
+  const promoLine = promoSave>0
+    ? `<div class="pt-line1">Today's promo</div><div class="pt-line2"><span class="reg">${usd(s.reg)}</span> &rarr; <b>${usd(s.promo)}</b> &middot; save ${usd(promoSave)}</div>`
+    : `<div class="pt-line1">Price</div><div class="pt-line2"><b>${usd(s.promo)}</b> per session</div>`;
+  document.getElementById("left").innerHTML = `
+    <h1>${s.name}</h1>
+    <p class="lede">${s.lede}</p>
+    <div class="benefits">
+      ${s.benefits.map(b=>`<div class="benefit"><span class="bdot">&#10003;</span>${b}</div>`).join("")}
+    </div>
+    <div class="promo-tag">${promoLine}</div>`;
+}
+
+function buildRight(){
+  document.getElementById("right").innerHTML = `
+    <div class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="hero-label">Save on top of the promo</div>
+          <div class="hero-num" id="heroNum">$0</div>
+          <div class="hero-sub" id="heroSub"></div>
+        </div>
+        <div class="hero-right">
+          <div class="q">package total</div>
+          <div class="t" id="heroTotal">$0</div>
+          <div class="p" id="heroPer">$0 per session</div>
+        </div>
+      </div>
+      <div>
+        <div class="slider-head">
+          <span class="lbl">Drag to choose sessions</span>
+          <span class="val"><span id="sessOut">6</span> sessions</span>
+        </div>
+        <input type="range" id="slider" min="1" max="6" step="1" value="6">
+        <div class="ticks" id="ticks"></div>
+      </div>
+    </div>
+    <div class="summary">
+      <div class="metric">
+        <div class="ml">Price per session</div>
+        <div class="mv coral" id="vEach">$0</div>
+        <div class="ms" id="sEach"></div>
+      </div>
+      <div class="metric">
+        <div class="ml">Package total</div>
+        <div class="mv" id="vTotal">$0</div>
+        <div class="ms"><span class="strike" id="sTotal"></span></div>
+      </div>
+      <div class="metric best">
+        <div class="ml">Package savings</div>
+        <div class="mv coral" id="vSave">$0</div>
+        <div class="ms" id="sSave"></div>
+      </div>
+    </div>
+    <div class="confirm" id="confirm">
+      <span id="confirmText"></span>
+      <b id="confirmSave"></b>
+    </div>`;
+
+  const ticks = document.getElementById("ticks");
+  ticks.innerHTML = [1,2,3,4,5,6].map(n=>`<span class="tick" data-n="${n}">${n}</span>`).join("");
+  ticks.querySelectorAll(".tick").forEach(t=>t.addEventListener("click",()=>{
+    sessions=+t.dataset.n; document.getElementById("slider").value=sessions; update();
+  }));
+  document.getElementById("slider").addEventListener("input",e=>{ sessions=+e.target.value; update(); });
+}
+
+let animRAF=null;
+function animateNum(el,to){
+  cancelAnimationFrame(animRAF);
+  const from = parseInt((el.textContent||"0").replace(/[^0-9]/g,""))||0;
+  const start=performance.now(), dur=420;
+  (function step(now){
+    const p=Math.min((now-start)/dur,1), e=1-Math.pow(1-p,3);
+    el.textContent = usd(from+(to-from)*e);
+    if(p<1) animRAF=requestAnimationFrame(step);
+  })(performance.now());
+}
+
+function update(){
+  const s=current, q=sessions, rate=rateFor(q);
+  const full=s.promo*q, price=full*(1-rate), pkgSave=full-price, per=price/q;
+  const promoSavePer = (s.reg - s.promo)*q;   // already saved vs regular
+  const totalSave = promoSavePer + pkgSave;     // promo + package combined
+
+  document.getElementById("sessOut").textContent=q;
+  document.querySelectorAll(".tick").forEach(t=>t.classList.toggle("on",+t.dataset.n===q));
+
+  animateNum(document.getElementById("heroNum"), pkgSave);
+  document.getElementById("heroSub").textContent = promoSavePer>0
+    ? "plus " + usd(promoSavePer) + " already off regular \u00b7 " + usd(totalSave) + " total saved"
+    : "";
+  document.getElementById("heroTotal").textContent=usd(price);
+  document.getElementById("heroPer").textContent=usd(per)+" per session";
+
+  document.getElementById("vEach").textContent=usd(per);
+  document.getElementById("sEach").textContent = rate>0 ? (rate*100)+"% off promo" : "promo price";
+  document.getElementById("vTotal").textContent=usd(price);
+  document.getElementById("sTotal").textContent = pkgSave>0 ? usd(full) : "";
+  document.getElementById("vSave").textContent=usd(pkgSave);
+  document.getElementById("sSave").textContent = q===6 ? "best value" : (pkgSave>0?"vs promo single":"single session");
+
+  const c=document.getElementById("confirm");
+  if(q>=2){
+    c.classList.add("show");
+    document.getElementById("confirmText").innerHTML = `${s.name} &middot; ${q}-session package`;
+    document.getElementById("confirmSave").textContent = "Saves "+usd(totalSave)+" total";
+  } else { c.classList.remove("show"); }
+}
+
+function selectService(s){
+  current=s; sessions=6;
+  buildLeft(s); buildRight();
+  document.getElementById("heroNum").textContent="$0";
+  update();
+}
+
+buildDashboard();
+</script>
+</body>
+</html>
