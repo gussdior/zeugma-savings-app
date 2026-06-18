@@ -64,6 +64,18 @@ body::before{
 .price-input input{border:none; background:transparent; font-family:inherit; font-size:17px; font-weight:600; color:var(--brown); width:100%; padding:10px 4px; outline:none;}
 .price-input.promo{border-color:var(--coral); background:#fbf1ec;}
 .price-input.promo input{color:var(--coral);}
+.price-input.dim{opacity:.4;}
+.pf-head{display:flex; align-items:center; gap:7px; margin-bottom:5px;}
+.pf-head label{margin:0;}
+.check{width:20px; height:20px; border-radius:6px; border:1.5px solid #c8bb9c; background:#fff; display:inline-flex; align-items:center; justify-content:center; color:#fff; cursor:pointer; padding:0; flex-shrink:0; transition:background .15s,border-color .15s,transform .1s;}
+.check svg{width:12px; height:12px; opacity:0;}
+.check.on{background:var(--coral); border-color:var(--coral);}
+.check.on svg{opacity:1;}
+.check.base{background:var(--brown); border-color:var(--brown); cursor:default;}
+.check.base svg{opacity:1;}
+.check.toggle:active{transform:scale(.9);}
+.pct-badge{font-size:11px; font-weight:700; color:var(--coral); background:#fbf1ec; border:1px solid #e8cbbf; border-radius:20px; padding:2px 8px; letter-spacing:.3px;}
+.pct-badge:empty{display:none;}
 .saved-pill{font-size:12px; color:var(--sage-ink); background:var(--sage); padding:5px 12px; border-radius:20px; opacity:0; transition:opacity .3s; font-weight:500;}
 .saved-pill.show{opacity:1;}
 .row-tools{display:flex; gap:8px;}
@@ -120,6 +132,7 @@ h1.svc{font-size:clamp(40px,5.2vw,68px); font-weight:800; color:var(--brown); li
 .promo-tag .l2{font-size:16px; color:var(--ink); margin-top:4px;}
 .promo-tag b{color:var(--coral); font-weight:700;}
 .promo-tag .reg{text-decoration:line-through; color:#b3a890;}
+.promo-tag .pct{display:inline-block; margin-left:6px; font-size:14px; color:var(--coral); font-weight:700;}
 
 /* right canvas */
 .right{flex:1; display:flex; flex-direction:column; justify-content:center; gap:clamp(14px,2vh,22px); min-width:0; position:relative; z-index:2;}
@@ -296,13 +309,18 @@ const LEGACY_KEY = "zeugma_prices";
 const usd = n => "$" + Math.round(n).toLocaleString("en-US");
 const rateFor = q => q>=6 ? 0.15 : (q>=2 ? 0.10 : 0);
 const num = v => { const n = parseInt(v,10); return (isNaN(n)||n<0) ? 0 : n; };
+const effHasPromo = s => s.promoActive && s.promo>0 && s.promo<s.reg;
+const pctOff = s => Math.round((s.reg - s.promo)/s.reg*100);
+const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
 // ---- data model ----
 function normalize(s){
+  const reg = num(s.reg), promo = num(s.promo);
+  const promoActive = (s.promoActive===undefined) ? (promo>0 && promo<reg) : !!s.promoActive;
   return {
     key: s.key || slugify(s.name||"service"),
     name: (s.name||"Service").toString().trim(),
-    reg: num(s.reg), promo: num(s.promo),
+    reg, promo, promoActive,
     lede: (s.lede||"").toString(),
     benefits: Array.isArray(s.benefits) ? s.benefits.filter(b=>b&&b.trim()).slice(0,3) : []
   };
@@ -345,14 +363,14 @@ function buildDashboard(){
   const wrap = document.getElementById("svcRows");
   wrap.innerHTML = services.map(s=>`
     <div class="svc-row" data-key="${s.key}">
-      <div class="svc-name">${esc(s.name)}${(s.promo>0 && s.promo<s.reg)?"":'<span class="nopromo">No promo</span>'}</div>
+      <div class="svc-name">${esc(s.name)}${effHasPromo(s)?"":'<span class="nopromo">No promo</span>'}</div>
       <div class="price-field">
-        <label>Regular price</label>
+        <div class="pf-head"><span class="check on base" title="Regular is the base price">${CHECK_SVG}</span><label>Regular price</label></div>
         <div class="price-input"><span>$</span><input type="number" inputmode="numeric" data-key="${s.key}" data-field="reg" value="${s.reg}"></div>
       </div>
       <div class="price-field">
-        <label>Promo price</label>
-        <div class="price-input promo"><span>$</span><input type="number" inputmode="numeric" data-key="${s.key}" data-field="promo" value="${s.promo}"></div>
+        <div class="pf-head"><button class="check toggle ${s.promoActive?'on':''}" data-toggle="${s.key}" title="Turn promo on or off">${CHECK_SVG}</button><label>Promo price</label><span class="pct-badge">${effHasPromo(s)?pctOff(s)+'% off':''}</span></div>
+        <div class="price-input promo ${s.promoActive?'':'dim'}"><span>$</span><input type="number" inputmode="numeric" data-key="${s.key}" data-field="promo" value="${s.promo}"></div>
       </div>
       <span class="saved-pill">Saved</span>
       <div class="row-tools">
@@ -377,14 +395,24 @@ function buildDashboard(){
       const pill = row.querySelector(".saved-pill");
       pill.classList.add("show");
       clearTimeout(pill._t); pill._t=setTimeout(()=>pill.classList.remove("show"),1200);
-      const nameEl = row.querySelector(".svc-name");
-      const hasP = s.promo>0 && s.promo<s.reg;
-      nameEl.innerHTML = esc(s.name) + (hasP?"":'<span class="nopromo">No promo</span>');
+      refreshRowMeta(row, s);
     });
   });
+  wrap.querySelectorAll("[data-toggle]").forEach(b=> b.addEventListener("click",()=>togglePromo(b.dataset.toggle)) );
   wrap.querySelectorAll(".open-btn").forEach(b=> b.addEventListener("click",()=>openClient(b.dataset.open)) );
   wrap.querySelectorAll("[data-edit]").forEach(b=> b.addEventListener("click",()=>openModal(b.dataset.edit)) );
   wrap.querySelectorAll("[data-remove]").forEach(b=> b.addEventListener("click",()=>removeService(b.dataset.remove)) );
+}
+function refreshRowMeta(row, s){
+  row.querySelector(".svc-name").innerHTML = esc(s.name) + (effHasPromo(s)?"":'<span class="nopromo">No promo</span>');
+  const badge = row.querySelector(".pct-badge");
+  if(badge) badge.textContent = effHasPromo(s) ? pctOff(s)+"% off" : "";
+}
+function togglePromo(key){
+  const s = services.find(x=>x.key===key);
+  s.promoActive = !s.promoActive;
+  saveServices(services);
+  buildDashboard();
 }
 function esc(str){ return (str||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 
@@ -418,7 +446,7 @@ function saveFromModal(){
   };
   if(editingKey){
     const s = services.find(x=>x.key===editingKey);
-    Object.assign(s, normalize({...data, key:s.key}));
+    Object.assign(s, normalize({...data, key:s.key, promoActive:s.promoActive}));
   }else{
     services.push(normalize({...data, key:slugify(name)}));
   }
@@ -455,7 +483,7 @@ document.getElementById("modalBack").addEventListener("click",e=>{ if(e.target.i
 // ---- CALC ----
 function calc(s, q){
   const rate = rateFor(q);
-  const hasPromo = s.promo>0 && s.promo<s.reg;
+  const hasPromo = effHasPromo(s);
   const base = hasPromo ? s.promo : s.reg;
   const gross = base*q;
   const packageTotal = gross*(1-rate);
@@ -471,7 +499,7 @@ function buildLeft(s){
   const c = calc(s,sessions);
   const promoBlock = c.hasPromo
     ? `<div class="promo-tag reveal d5"><div class="l1">Today's promo</div>
-         <div class="l2"><span class="reg">${usd(s.reg)}</span> to <b>${usd(s.promo)}</b>, you save ${usd(s.reg-s.promo)}</div></div>`
+         <div class="l2"><span class="reg">${usd(s.reg)}</span> to <b>${usd(s.promo)}</b>, you save ${usd(s.reg-s.promo)} <span class="pct">${pctOff(s)}% off</span></div></div>`
     : `<div class="promo-tag reveal d5"><div class="l1">Per session</div>
          <div class="l2"><b>${usd(s.reg)}</b> single session price</div></div>`;
   const bullets = s.benefits.length
