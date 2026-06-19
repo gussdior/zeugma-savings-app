@@ -219,6 +219,34 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
 .cta-wrap{display:flex; flex-direction:column; align-items:center; gap:5px;}
 .cta-wrap .note{font-size:11px; color:#bcae8c;}
 
+/* bundle */
+.bundle-field{display:flex; flex-direction:column; gap:5px; align-items:center;}
+.bundle-field label{font-size:10px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.6px;}
+.bundle-check{width:28px; height:28px; border-radius:8px; border:1.5px solid #c8bb9c; background:#fff; display:inline-flex; align-items:center; justify-content:center; color:#fff; cursor:pointer; padding:0; transition:background .15s,border-color .15s,transform .1s;}
+.bundle-check svg{width:16px; height:16px; opacity:0;}
+.bundle-check.on{background:var(--coral); border-color:var(--coral);}
+.bundle-check.on svg{opacity:1;}
+.bundle-check:active{transform:scale(.9);}
+.bundle-bar{position:absolute; left:0; right:0; bottom:0; background:var(--brown); color:#fff; padding:16px 34px; display:flex; align-items:center; justify-content:space-between; gap:18px; transform:translateY(120%); transition:transform .3s ease; box-shadow:0 -10px 30px -12px rgba(0,0,0,.4); z-index:5;}
+.bundle-bar.show{transform:translateY(0);}
+.bundle-bar .bb-info{font-size:15px; color:#e6dcc5;}
+.bundle-bar .bb-info b{color:#fff;}
+.bundle-bar .bb-save{color:var(--gold); font-weight:700; margin-left:10px;}
+.bb-btn{font-family:inherit; font-size:15px; font-weight:700; padding:13px 24px; border:none; border-radius:12px; background:var(--gold); color:#3a2f0a; cursor:pointer; display:flex; align-items:center; gap:9px; transition:transform .12s, background .2s;}
+.bb-btn:hover{background:var(--gold-deep);}
+.bb-btn:active{transform:scale(.97);}
+.bstage{flex:1; display:flex; flex-direction:column; padding:10px 40px 16px; gap:clamp(12px,2vh,20px); min-height:0; overflow-y:auto; z-index:2;}
+.bhero{text-align:center; flex-shrink:0;}
+.blist{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px;}
+.bcard{background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 20px; box-shadow:var(--shadow-sm);}
+.bcard .bc-name{font-size:19px; font-weight:600; color:var(--brown);}
+.bcard .bc-sess{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-top:2px;}
+.bcard .bc-total{font-size:32px; font-weight:800; color:var(--brown); line-height:1; margin-top:12px; letter-spacing:-1px;}
+.bcard .bc-reg{font-size:13px; color:#b3a890; margin-top:3px;}
+.bcard .bc-reg .strike{text-decoration:line-through;}
+.bcard .bc-save{display:inline-block; margin-top:9px; font-size:13px; color:var(--sage-ink); background:var(--sage); padding:3px 11px; border-radius:20px; font-weight:600;}
+.bcard .bc-per{font-size:12px; color:var(--muted); margin-top:7px;}
+
 @keyframes fadeUp{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
 .client.active .reveal{opacity:0; animation:fadeUp .55s cubic-bezier(.2,.7,.2,1) forwards;}
 .client.active .d1{animation-delay:.04s;} .client.active .d2{animation-delay:.11s;}
@@ -260,6 +288,12 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
     <div class="dash-title">Set prices, turn a promo on or off, and choose how many sessions to offer this client. Then open the service for them.</div>
     <div id="svcRows"></div>
   </div>
+  <div class="bundle-bar" id="bundleBar">
+    <div class="bb-info"><b id="bundleCount">0 services</b> selected for this client <span class="bb-save" id="bundleSave"></span></div>
+    <button class="bb-btn" id="bundleOpen">View bundle for client
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
 </div>
 
 <!-- ============ CLIENT SAVINGS ============ -->
@@ -293,6 +327,36 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
       </button>
       <div class="note">Lock in your savings today.</div>
     </div>
+  </div>
+</div>
+
+<!-- ============ BUNDLE CLIENT ============ -->
+<div class="screen client" id="bundleClient">
+  <svg class="leaf" viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><path d="M95 5C60 8 30 22 16 48 8 63 6 80 8 95c1-14 6-29 16-43C40 30 66 16 95 5Z M52 44c-9 4-17 12-22 23 11-3 20-10 26-21 5-9 8-19 9-30-5 8-8 19-13 28Z"/></svg>
+  <div class="topbar">
+    <button class="back-btn" id="bBack">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </button>
+    <div class="brandmark">ZEUGMA SPA</div>
+  </div>
+  <div class="bstage">
+    <div class="bhero">
+      <div class="hero-eyebrow">Your personalized package</div>
+      <div class="hero-main">
+        <div class="row"><span class="hero-num"><span class="cur">$</span><span id="bHeroNum">0</span></span><span class="hero-tot">Total<br>savings</span></div>
+        <div class="hero-pill" id="bHeroPill"></div>
+      </div>
+    </div>
+    <div class="blist" id="bList"></div>
+  </div>
+  <div class="ctabar" id="bCta">
+    <div class="gift"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
+    <div class="cmeta"><div class="t1" id="bCtaTitle"></div><div class="t2">Your complete treatment plan.</div></div>
+    <div class="csave"><div class="l">You save</div><div class="v" id="bCtaSave">$0</div><div class="s" id="bCtaPkg"></div></div>
+    <div class="cta-wrap"><button class="cta-btn" id="bCtaBtn">Reserve this package
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button><div class="note">Lock in your savings today.</div></div>
   </div>
 </div>
 
@@ -409,12 +473,14 @@ function slugify(name){
 let services = loadServices();
 let current = services[0];
 let sessions = 6;
+let bundle = [];
 
 // ---- DASHBOARD ----
 function buildDashboard(){
   const wrap = document.getElementById("svcRows");
   wrap.innerHTML = services.map(s=>`
     <div class="svc-row" data-key="${s.key}">
+      <div class="bundle-field"><label>Bundle</label><button class="bundle-check ${bundle.includes(s.key)?'on':''}" data-bk="${s.key}" title="Add this service to a bundle">${CHECK_SVG}</button></div>
       <div class="svc-name">${esc(s.name)}${effHasPromo(s)?"":'<span class="nopromo">No promo</span>'}</div>
       <div class="price-field">
         <div class="pf-head"><span class="check on base" title="Regular is the base price">${CHECK_SVG}</span><label>Regular price</label></div>
@@ -463,6 +529,8 @@ function buildDashboard(){
   wrap.querySelectorAll(".open-btn").forEach(b=> b.addEventListener("click",()=>openClient(b.dataset.open)) );
   wrap.querySelectorAll("[data-edit]").forEach(b=> b.addEventListener("click",()=>openModal(b.dataset.edit)) );
   wrap.querySelectorAll("[data-remove]").forEach(b=> b.addEventListener("click",()=>removeService(b.dataset.remove)) );
+  wrap.querySelectorAll(".bundle-check").forEach(b=> b.addEventListener("click",()=>toggleBundle(b.dataset.bk)) );
+  updateBundleBar();
 }
 function esc(str){ return (str||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
 function refreshRowMeta(row, s){
@@ -526,6 +594,7 @@ function removeService(key){
   const s = services.find(x=>x.key===key);
   if(!confirm("Remove "+s.name+" from the dashboard?")) return;
   services = services.filter(x=>x.key!==key);
+  bundle = bundle.filter(k=>k!==key);
   saveServices(services);
   buildDashboard();
 }
@@ -717,6 +786,58 @@ function selectService(s){
   document.getElementById("heroNum").textContent="0";
   requestAnimationFrame(()=>update());
 }
+
+// ---- BUNDLE ----
+function toggleBundle(key){
+  const i = bundle.indexOf(key);
+  if(i>=0) bundle.splice(i,1); else bundle.push(key);
+  const cb = document.querySelector('.bundle-check[data-bk="'+key+'"]');
+  if(cb) cb.classList.toggle("on", bundle.includes(key));
+  updateBundleBar();
+}
+function bundleTotals(){
+  let totalSave=0, totalPkg=0, totalReg=0, totalSess=0;
+  bundle.forEach(k=>{ const s=services.find(x=>x.key===k); if(!s) return; const q=s.maxSessions, c=calc(s,q); totalSave+=c.totalSave; totalPkg+=c.packageTotal; totalReg+=c.regGross; totalSess+=q; });
+  return {totalSave, totalPkg, totalReg, totalSess};
+}
+function updateBundleBar(){
+  const bar=document.getElementById("bundleBar");
+  if(bundle.length>=2){
+    const t=bundleTotals();
+    document.getElementById("bundleCount").textContent = bundle.length+" services";
+    document.getElementById("bundleSave").textContent = "Save "+usd(t.totalSave);
+    bar.classList.add("show");
+  }else{ bar.classList.remove("show"); }
+}
+function openBundle(){
+  if(bundle.length<2) return;
+  buildBundleClient();
+  showScreen("bundleClient");
+}
+function buildBundleClient(){
+  const t=bundleTotals();
+  document.getElementById("bList").innerHTML = bundle.map(k=>{
+    const s=services.find(x=>x.key===k); if(!s) return "";
+    const q=s.maxSessions, c=calc(s,q);
+    return `<div class="bcard">
+      <div class="bc-name">${esc(s.name)}</div>
+      <div class="bc-sess">${q} ${q===1?"session":"sessions"}</div>
+      <div class="bc-total">${usd(c.packageTotal)}</div>
+      <div class="bc-reg"><span class="strike">${usd(c.regGross)}</span> regular</div>
+      <div class="bc-save">Save ${usd(c.totalSave)}</div>
+      <div class="bc-per">${usd(c.perSession)} per session</div>
+    </div>`;
+  }).join("");
+  document.getElementById("bHeroNum").textContent="0";
+  document.getElementById("bHeroPill").innerHTML = "across "+bundle.length+" treatments, "+t.totalSess+" sessions total";
+  document.getElementById("bCtaTitle").textContent = bundle.length+"-treatment package.";
+  document.getElementById("bCtaSave").textContent = usd(t.totalSave);
+  document.getElementById("bCtaPkg").textContent = "package total "+usd(t.totalPkg);
+  requestAnimationFrame(()=>animateNum(document.getElementById("bHeroNum"), t.totalSave, comma));
+}
+document.getElementById("bundleOpen").addEventListener("click",openBundle);
+document.getElementById("bBack").addEventListener("click",()=>{ buildDashboard(); showScreen("dash"); });
+document.getElementById("bCtaBtn").addEventListener("click",e=>{ const b=e.currentTarget; b.style.transform="scale(.97)"; setTimeout(()=>b.style.transform="",140); });
 
 buildDashboard();
 </script>
