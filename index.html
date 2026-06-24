@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#4A3C0E">
 <meta name="apple-mobile-web-app-title" content="Zeugma">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="manifest" href="manifest.json">
 <title>Zeugma · Package Savings</title>
@@ -49,7 +50,7 @@ body::before{
 @media (orientation:portrait){#rotate{display:flex;}}
 
 /* ---------- DASHBOARD ---------- */
-.dash-head{background:var(--olive); color:#efe7d2; padding:18px 34px; flex-shrink:0; display:flex; justify-content:space-between; align-items:center; gap:18px;}
+.dash-head{background:var(--olive); color:#efe7d2; padding:calc(18px + env(safe-area-inset-top)) calc(34px + env(safe-area-inset-right)) 18px calc(34px + env(safe-area-inset-left)); flex-shrink:0; display:flex; justify-content:space-between; align-items:center; gap:18px;}
 .dash-head .brand .b{font-size:18px; font-weight:600; letter-spacing:5px;}
 .dash-head .brand .s{font-size:10px; letter-spacing:3px; color:#bcae8c; margin-top:2px;}
 .add-btn{font-family:inherit; font-size:14px; font-weight:600; padding:11px 20px; border:1px solid #6b5a22; border-radius:30px; background:rgba(255,255,255,.08); color:#efe7d2; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .2s, transform .12s;}
@@ -121,7 +122,7 @@ body::before{
 /* ---------- CLIENT ---------- */
 .client{position:relative;}
 .leaf{position:fixed; bottom:-40px; left:-60px; width:340px; height:340px; z-index:0; opacity:.07; pointer-events:none; color:var(--brown); filter:blur(1px);}
-.topbar{display:flex; align-items:center; gap:16px; padding:16px 40px 4px; flex-shrink:0; z-index:2;}
+.topbar{display:flex; align-items:center; gap:16px; padding:calc(16px + env(safe-area-inset-top)) calc(40px + env(safe-area-inset-right)) 4px calc(40px + env(safe-area-inset-left)); flex-shrink:0; z-index:2;}
 .back-btn{font-family:inherit; font-size:14px; font-weight:600; padding:11px 18px; border:1px solid var(--line); border-radius:30px; background:#fff; color:var(--brown); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:7px; box-shadow:var(--shadow-sm);}
 .back-btn:active{transform:scale(.97);}
 .topbar .brandmark{margin-left:auto; font-size:13px; letter-spacing:5px; color:var(--muted); font-weight:600;}
@@ -202,7 +203,7 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
 .bestrib{background:var(--coral); color:#fff;}
 
 /* CTA bar */
-.ctabar{flex-shrink:0; margin:8px 40px 16px; background:var(--brown); border-radius:20px; padding:16px 26px; display:flex; align-items:center; gap:24px; z-index:2; box-shadow:var(--shadow);}
+.ctabar{flex-shrink:0; margin:8px calc(40px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(40px + env(safe-area-inset-left)); background:var(--brown); border-radius:20px; padding:16px 26px; display:flex; align-items:center; gap:24px; z-index:2; box-shadow:var(--shadow);}
 .ctabar .gift{flex-shrink:0; width:52px; height:52px; border-radius:50%; border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; color:var(--gold);}
 .ctabar .gift svg{width:24px; height:24px;}
 .ctabar .cmeta{flex:1; min-width:0;}
@@ -227,7 +228,7 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
 .bundle-check.on{background:var(--coral); border-color:var(--coral);}
 .bundle-check.on svg{opacity:1;}
 .bundle-check:active{transform:scale(.9);}
-.bundle-bar{position:absolute; left:0; right:0; bottom:0; background:var(--brown); color:#fff; padding:16px 34px; display:flex; align-items:center; justify-content:space-between; gap:18px; transform:translateY(120%); transition:transform .3s ease; box-shadow:0 -10px 30px -12px rgba(0,0,0,.4); z-index:5;}
+.bundle-bar{position:absolute; left:0; right:0; bottom:0; background:var(--brown); color:#fff; padding:16px calc(34px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom)) calc(34px + env(safe-area-inset-left)); display:flex; align-items:center; justify-content:space-between; gap:18px; transform:translateY(120%); transition:transform .3s ease; box-shadow:0 -10px 30px -12px rgba(0,0,0,.4); z-index:5;}
 .bundle-bar.show{transform:translateY(0);}
 .bundle-bar .bb-info{font-size:15px; color:#e6dcc5;}
 .bundle-bar .bb-info b{color:#fff;}
