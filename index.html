@@ -431,6 +431,36 @@ const pctOff = s => Math.round((s.reg - s.promo)/s.reg*100);
 const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 const PEOPLE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
 
+const BIZ = { web:"zeugmaspa.com", ig:"@zeugmamedspa", phone:"(305) 481-5659" };
+const INV_KEY = "zeugma_invoice_seq";
+const INV_MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function invoiceDateStr(d){
+  d = d || new Date();
+  return INV_MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+}
+function invStamp(d){
+  d = d || new Date();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return "" + d.getFullYear() + m + day;
+}
+function invState(){
+  try{ const s = JSON.parse(localStorage.getItem(INV_KEY)||"null"); if(s && s.date && s.seq) return s; }catch(e){}
+  return { date:"", seq:0 };
+}
+function peekInvoiceNo(){
+  const today = invStamp(), s = invState();
+  const seq = (s.date === today) ? s.seq + 1 : 1;
+  return "ZMS-" + today + "-" + seq;
+}
+function nextInvoiceNo(){
+  const today = invStamp(), s = invState();
+  const seq = (s.date === today) ? s.seq + 1 : 1;
+  try{ localStorage.setItem(INV_KEY, JSON.stringify({ date:today, seq })); }catch(e){}
+  return "ZMS-" + today + "-" + seq;
+}
+
 function normalize(s){
   const reg = num(s.reg), promo = num(s.promo);
   const promoActive = (s.promoActive===undefined) ? (promo>0 && promo<reg) : !!s.promoActive;
