@@ -75,9 +75,9 @@ syntactically valid email required; show an error in the existing `.err` style.
 Writes the approved invoice markup into a hidden container `#invoiceSheet` (placed once at
 the end of `<body>`). Inputs: business constants, invoice number, today's date (formatted
 "Jun 24, 2026"), client info, and an array of line items (`{name, subtitle, qty,
-perSession, amount}`) plus totals. Business constants (website, Instagram, phone
-(305) 481-5659) live in one small config object near the top of the script so they are
-easy to edit.
+perSession, amount}`) plus totals. Business constants — website **zeugmaspa.com**,
+Instagram **@zeugmamedspa**, phone **(305) 481-5659** — live in one small config object
+near the top of the script so they are easy to edit.
 
 ### 4. Delivery (`window.print()` + iOS share)
 "Make PDF" calls `buildInvoice()` then `window.print()`. A `@media print` block hides
