@@ -259,6 +259,50 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
 @media (max-width:1100px) and (orientation:landscape){
   .stage{gap:26px; padding:6px 24px 8px;} .left{flex:0 0 30%;} .ctabar{margin:6px 24px 12px;}
 }
+
+/* ---------- INVOICE ---------- */
+#invoiceSheet{display:none;}
+.inv-card{width:100%; max-width:720px; margin:0 auto; background:#fff; color:#3A3320; font-family:var(--sans);}
+.inv-head{background:linear-gradient(135deg,#6f6442 0%,#4A3C0E 70%); color:#E9E0CE; padding:30px 40px; display:flex; justify-content:space-between; align-items:center; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+.inv-word{font-size:22px; font-weight:400; letter-spacing:7px;}
+.inv-contact{text-align:right; font-size:11px; color:#d3c9ad; line-height:1.7; letter-spacing:.5px;}
+.inv-meta{padding:24px 40px 6px; display:flex; justify-content:space-between; align-items:flex-end;}
+.inv-label-c{font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--coral); margin-bottom:4px;}
+.inv-no,.inv-date{font-size:13px; color:var(--muted);}
+.inv-date span{color:#3A3320; font-weight:600;}
+.inv-billto{position:relative; padding:14px 40px 0;}
+.inv-label{font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:6px;}
+.inv-cli-name{font-size:16px; font-weight:600; color:var(--brown);}
+.inv-cli-meta{font-size:13px; color:var(--muted); margin-top:2px;}
+.inv-stamp{position:absolute; top:6px; right:46px; border:3px solid #51662f; color:#51662f; font-size:28px; font-weight:800; letter-spacing:5px; padding:5px 18px 7px; border-radius:9px; transform:rotate(-11deg); opacity:.72; text-transform:uppercase; box-shadow:inset 0 0 0 2px rgba(81,102,47,.25); -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+.inv-table{padding:26px 40px 0;}
+.inv-row{display:grid; grid-template-columns:1fr 70px 110px 110px; align-items:center;}
+.inv-thead{font-size:10px; font-weight:600; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); padding:0 0 9px; border-bottom:2px solid var(--olive);}
+.inv-table .inv-row:not(.inv-thead){padding:14px 0; border-bottom:1px solid #e7ddc8;}
+.inv-it-name{font-size:15px; font-weight:600; color:var(--brown);}
+.inv-it-sub{font-size:12px; color:var(--muted); margin-top:2px;}
+.inv-c{text-align:center; font-size:14px;}
+.inv-r{text-align:right; font-size:14px;}
+.inv-amt{font-size:15px; font-weight:600;}
+.inv-totals{padding:18px 40px 0; display:flex; justify-content:flex-end;}
+.inv-tot-box{width:300px;}
+.inv-tl{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); padding:6px 0;}
+.inv-strike{text-decoration:line-through;}
+.inv-save{color:#51662f;} .inv-save span{font-weight:700;}
+.inv-tot-final{display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding:14px 16px; background:var(--olive); color:#fff; border-radius:10px; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+.inv-tot-final span:first-child{font-size:13px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--gold);}
+.inv-tot-final span:last-child{font-size:24px; font-weight:800;}
+.inv-foot{margin:26px 40px 30px; padding-top:18px; border-top:1px solid #e7ddc8; text-align:center;}
+.inv-thanks{font-size:13px; color:var(--brown); font-weight:600;}
+.inv-foot-sub{font-size:11px; color:#a99f80; margin-top:5px;}
+
+@media print{
+  @page{ margin:14mm; }
+  body{ overflow:visible !important; }
+  body > *{ display:none !important; }
+  #invoiceSheet{ display:block !important; }
+  #rotate{ display:none !important; }
+}
 </style>
 </head>
 <body>
@@ -398,6 +442,9 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
     </div>
   </div>
 </div>
+
+<!-- ============ INVOICE (print only) ============ -->
+<div id="invoiceSheet" aria-hidden="true"></div>
 
 <script>
 const DEFAULTS = [
@@ -697,6 +744,52 @@ function invoiceForBundle(){
     regGross += c.regGross; totalSave += c.totalSave; packageTotal += c.packageTotal;
   });
   return { items, totals:{ regGross, totalSave, packageTotal } };
+}
+function buildInvoice(d){
+  const rows = d.items.map(it=>`
+    <div class="inv-row">
+      <div><div class="inv-it-name">${esc(it.name)}</div><div class="inv-it-sub">${esc(it.subtitle)}</div></div>
+      <div class="inv-c">${it.qty}</div>
+      <div class="inv-r">${usd(it.perSession)}</div>
+      <div class="inv-r inv-amt">${usd(it.amount)}</div>
+    </div>`).join("");
+  document.getElementById("invoiceSheet").innerHTML = `
+    <div class="inv-card">
+      <div class="inv-head">
+        <div class="inv-word">ZEUGMA&nbsp;MEDSPA</div>
+        <div class="inv-contact">${BIZ.web}<br>${BIZ.ig}</div>
+      </div>
+      <div class="inv-meta">
+        <div><div class="inv-label-c">Invoice</div><div class="inv-no">No. ${esc(d.invoiceNo)}</div></div>
+        <div class="inv-date"><span>Date:</span> ${esc(d.dateStr)}</div>
+      </div>
+      <div class="inv-billto">
+        <div class="inv-label">Billed to</div>
+        <div class="inv-cli-name">${esc(d.client.name)}</div>
+        <div class="inv-cli-meta">${esc(d.client.email)}${d.client.phone?(" · "+esc(d.client.phone)):""}</div>
+        <div class="inv-stamp">Paid</div>
+      </div>
+      <div class="inv-table">
+        <div class="inv-row inv-thead">
+          <div>Package / what's included</div>
+          <div class="inv-c">Qty</div>
+          <div class="inv-r">Per session</div>
+          <div class="inv-r">Amount</div>
+        </div>
+        ${rows}
+      </div>
+      <div class="inv-totals">
+        <div class="inv-tot-box">
+          <div class="inv-tl"><span>Regular price</span><span class="inv-strike">${usd(d.totals.regGross)}</span></div>
+          <div class="inv-tl inv-save"><span>You saved</span><span>${usd(d.totals.totalSave)}</span></div>
+          <div class="inv-tot-final"><span>Total</span><span>${usd(d.totals.packageTotal)}</span></div>
+        </div>
+      </div>
+      <div class="inv-foot">
+        <div class="inv-thanks">Thank you for choosing Zeugma MedSpa.</div>
+        <div class="inv-foot-sub">Questions about your package? Call us anytime at ${BIZ.phone}.</div>
+      </div>
+    </div>`;
 }
 
 // ---- LEFT RAIL ----
