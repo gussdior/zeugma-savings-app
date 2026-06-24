@@ -242,15 +242,23 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
 .bb-btn:active{transform:scale(.97);}
 .bstage{flex:1; display:flex; flex-direction:column; padding:10px 40px 16px; gap:clamp(12px,2vh,20px); min-height:0; overflow-y:auto; z-index:2;}
 .bhero{text-align:center; flex-shrink:0;}
-.blist{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px;}
-.bcard{background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 20px; box-shadow:var(--shadow-sm);}
-.bcard .bc-name{font-size:19px; font-weight:600; color:var(--brown);}
-.bcard .bc-sess{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.6px; margin-top:2px;}
-.bcard .bc-total{font-size:32px; font-weight:800; color:var(--brown); line-height:1; margin-top:12px; letter-spacing:-1px;}
-.bcard .bc-reg{font-size:13px; color:#b3a890; margin-top:3px;}
-.bcard .bc-reg .strike{text-decoration:line-through;}
-.bcard .bc-save{display:inline-block; margin-top:9px; font-size:13px; color:var(--sage-ink); background:var(--sage); padding:3px 11px; border-radius:20px; font-weight:600;}
-.bcard .bc-per{font-size:12px; color:var(--muted); margin-top:7px;}
+.bcompare{flex-shrink:0;}
+.blist{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px;}
+.bcard{background:#fff; border:1px solid var(--line); border-radius:18px; padding:16px 18px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:12px;}
+.bcard .bc-top{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.bcard .bc-name{font-size:18px; font-weight:600; color:var(--brown);}
+.bcard .bc-name .nopromo{display:inline-block; font-size:10px; font-weight:600; letter-spacing:.5px; color:var(--muted); background:var(--cream); border:1px solid var(--line); border-radius:20px; padding:2px 8px; margin-left:6px; vertical-align:middle; text-transform:uppercase;}
+.bcard .bc-bv{flex-shrink:0;}
+.bcard .bc-ctl{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.bcard .bc-ctl-l{font-size:11px; font-weight:600; letter-spacing:.6px; text-transform:uppercase; color:var(--muted);}
+.bcard .bc-figs{display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; border-top:1px solid var(--line); padding-top:12px;}
+.bcard .bc-fig{display:flex; flex-direction:column; gap:2px;}
+.bcard .bc-fl{font-size:10px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:var(--muted);}
+.bcard .bc-total{font-size:24px; font-weight:800; color:var(--brown); line-height:1; letter-spacing:-.5px;}
+.bcard .bc-reg{font-size:15px; color:#b3a890; font-weight:600;}
+.bcard .bc-reg.strike{text-decoration:line-through;}
+.bcard .bc-save{font-size:15px; color:var(--sage-ink); font-weight:700;}
+.bcard .bc-per{font-size:15px; color:var(--brown); font-weight:600;}
 
 @keyframes fadeUp{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
 .client.active .reveal{opacity:0; animation:fadeUp .55s cubic-bezier(.2,.7,.2,1) forwards;}
@@ -395,6 +403,26 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
       <div class="hero-main">
         <div class="row"><span class="hero-num"><span class="cur">$</span><span id="bHeroNum">0</span></span><span class="hero-tot">Total<br>savings</span></div>
         <div class="hero-pill" id="bHeroPill"></div>
+      </div>
+    </div>
+    <div class="compare bcompare" id="bCompare">
+      <div class="cmp">
+        <div class="cl">Regular price (<span id="bCmpSess">0</span> sessions)</div>
+        <div class="cv" id="bCmpReg">$0</div>
+        <div class="cs"><span class="strike" id="bCmpRegNote"></span></div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="cmp">
+        <div class="cl">Your <span id="bCmpCount">0</span>-treatment bundle</div>
+        <div class="cv coral" id="bCmpPkg">$0</div>
+        <div class="cs" id="bCmpPkgNote"></div>
+      </div>
+      <div class="cmp-div"></div>
+      <div class="cmp-right">
+        <div class="b1">Package savings</div>
+        <div class="v1" id="bCmpPkgSave">$0</div>
+        <div class="b2">Total savings</div>
+        <div class="v2" id="bCmpTotSave">$0</div>
       </div>
     </div>
     <div class="blist" id="bList"></div>
@@ -770,13 +798,13 @@ function invoiceForBundle(){
   let regGross = 0, totalSave = 0, packageTotal = 0;
   bundle.forEach(k=>{
     const s = services.find(x=>x.key===k); if(!s) return;
-    const q = clampSess(s.maxSessions), c = calc(s, q);
+    const q = bundleSessFor(s), c = calc(s, q);
     items.push({
       name: s.name,
       subtitle: q + (q===1?" session":" sessions") + (c.hasPromo?" · promo price":""),
       qty: q, perSession: c.perSession, amount: c.packageTotal
     });
-    regGross += c.regGross; totalSave += c.totalSave; packageTotal += c.packageTotal;
+    regGross += Math.round(c.regGross); totalSave += Math.round(c.totalSave); packageTotal += Math.round(c.packageTotal);
   });
   return { items, totals:{ regGross, totalSave, packageTotal } };
 }
@@ -976,6 +1004,9 @@ function selectService(s){
 }
 
 // ---- BUNDLE ----
+let bundleSessions = {};
+function bundleSessFor(s){ return clampSess(bundleSessions[s.key] != null ? bundleSessions[s.key] : s.maxSessions); }
+
 function toggleBundle(key){
   const i = bundle.indexOf(key);
   if(i>=0) bundle.splice(i,1); else bundle.push(key);
@@ -984,9 +1015,17 @@ function toggleBundle(key){
   updateBundleBar();
 }
 function bundleTotals(){
-  let totalSave=0, totalPkg=0, totalReg=0, totalSess=0;
-  bundle.forEach(k=>{ const s=services.find(x=>x.key===k); if(!s) return; const q=s.maxSessions, c=calc(s,q); totalSave+=c.totalSave; totalPkg+=c.packageTotal; totalReg+=c.regGross; totalSess+=q; });
-  return {totalSave, totalPkg, totalReg, totalSess};
+  let totalSave=0, totalPkg=0, totalReg=0, totalPkgSave=0, totalSess=0;
+  bundle.forEach(k=>{
+    const s=services.find(x=>x.key===k); if(!s) return;
+    const q=bundleSessFor(s), c=calc(s,q);
+    totalSave += Math.round(c.totalSave);
+    totalPkg  += Math.round(c.packageTotal);
+    totalReg  += Math.round(c.regGross);
+    totalPkgSave += Math.round(c.packageSave);
+    totalSess += q;
+  });
+  return {totalSave, totalPkg, totalReg, totalPkgSave, totalSess};
 }
 function updateBundleBar(){
   const bar=document.getElementById("bundleBar");
@@ -1003,25 +1042,75 @@ function openBundle(){
   showScreen("bundleClient");
 }
 function buildBundleClient(){
-  const t=bundleTotals();
   document.getElementById("bList").innerHTML = bundle.map(k=>{
     const s=services.find(x=>x.key===k); if(!s) return "";
-    const q=s.maxSessions, c=calc(s,q);
-    return `<div class="bcard">
-      <div class="bc-name">${esc(s.name)}</div>
-      <div class="bc-sess">${q} ${q===1?"session":"sessions"}</div>
-      <div class="bc-total">${usd(c.packageTotal)}</div>
-      <div class="bc-reg"><span class="strike">${usd(c.regGross)}</span> regular</div>
-      <div class="bc-save">Save ${usd(c.totalSave)}</div>
-      <div class="bc-per">${usd(c.perSession)} per session</div>
+    return `<div class="bcard" data-bk="${s.key}">
+      <div class="bc-top">
+        <div class="bc-name">${esc(s.name)}${effHasPromo(s)?"":'<span class="nopromo">No promo</span>'}</div>
+        <span class="bvtag bc-bv"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15 9 22 9 17 14 19 22 12 17 5 22 7 14 2 9 9 9"/></svg>Best value</span>
+      </div>
+      <div class="bc-ctl">
+        <span class="bc-ctl-l">Sessions for this client</span>
+        <div class="stepper">
+          <button class="step" data-bstep="${s.key}" data-d="-1" type="button">&#8722;</button>
+          <span class="sess-val" data-bsess="${s.key}">0</span>
+          <button class="step" data-bstep="${s.key}" data-d="1" type="button">+</button>
+        </div>
+      </div>
+      <div class="bc-figs">
+        <div class="bc-fig"><div class="bc-fl">Package</div><div class="bc-total" data-btotal="${s.key}">$0</div></div>
+        <div class="bc-fig"><div class="bc-fl">Regular</div><div class="bc-reg strike" data-breg="${s.key}">$0</div></div>
+        <div class="bc-fig"><div class="bc-fl">You save</div><div class="bc-save" data-bsave="${s.key}">$0</div></div>
+        <div class="bc-fig"><div class="bc-fl">Per session</div><div class="bc-per" data-bper="${s.key}">$0</div></div>
+      </div>
     </div>`;
   }).join("");
+  document.getElementById("bList").querySelectorAll("[data-bstep]").forEach(b=>
+    b.addEventListener("click",()=>bundleStep(b.dataset.bstep, +b.dataset.d)) );
   document.getElementById("bHeroNum").textContent="0";
+  updateBundle(true);
+}
+function bundleStep(key, d){
+  const s=services.find(x=>x.key===key); if(!s) return;
+  const max=clampSess(s.maxSessions), cur=bundleSessFor(s);
+  bundleSessions[key]=Math.min(max, Math.max(MIN_SESS, cur+d));
+  updateBundle(false);
+}
+function updateBundle(animate){
+  const t=bundleTotals();
+  bundle.forEach(k=>{
+    const s=services.find(x=>x.key===k); if(!s) return;
+    const q=bundleSessFor(s), c=calc(s,q), max=clampSess(s.maxSessions);
+    const set=(attr,val)=>{ const el=document.querySelector('['+attr+'="'+k+'"]'); if(el) el.textContent=val; };
+    set("data-bsess", q);
+    set("data-btotal", usd(c.packageTotal));
+    set("data-breg", usd(c.regGross));
+    set("data-bsave", "Save "+usd(c.totalSave));
+    set("data-bper", usd(c.perSession)+"/ea");
+    const card=document.querySelector('.bcard[data-bk="'+k+'"]');
+    if(card){
+      const bv=card.querySelector(".bc-bv"); if(bv) bv.classList.toggle("show", q===max && max>MIN_SESS);
+      card.querySelectorAll("[data-bstep]").forEach(btn=>{
+        const dis=(+btn.dataset.d<0 && q<=MIN_SESS) || (+btn.dataset.d>0 && q>=max);
+        btn.disabled=dis; btn.style.opacity=dis?.35:"";
+      });
+    }
+  });
+  document.getElementById("bCmpSess").textContent = t.totalSess;
+  document.getElementById("bCmpCount").textContent = bundle.length;
+  document.getElementById("bCmpReg").textContent = usd(t.totalReg);
+  document.getElementById("bCmpRegNote").textContent = "across "+bundle.length+(bundle.length===1?" treatment":" treatments");
+  document.getElementById("bCmpPkg").textContent = usd(t.totalPkg);
+  document.getElementById("bCmpPkgNote").textContent = t.totalSess+" sessions total";
+  document.getElementById("bCmpPkgSave").textContent = usd(t.totalPkgSave);
+  document.getElementById("bCmpTotSave").textContent = usd(t.totalSave);
   document.getElementById("bHeroPill").innerHTML = "across "+bundle.length+" treatments, "+t.totalSess+" sessions total";
   document.getElementById("bCtaTitle").textContent = bundle.length+"-treatment package.";
   document.getElementById("bCtaSave").textContent = usd(t.totalSave);
   document.getElementById("bCtaPkg").textContent = "package total "+usd(t.totalPkg);
-  requestAnimationFrame(()=>animateNum(document.getElementById("bHeroNum"), t.totalSave, comma));
+  const heroEl=document.getElementById("bHeroNum");
+  if(animate){ requestAnimationFrame(()=>animateNum(heroEl, t.totalSave, comma)); }
+  else { animateNum(heroEl, t.totalSave, comma); }
 }
 document.getElementById("bundleOpen").addEventListener("click",openBundle);
 document.getElementById("bBack").addEventListener("click",()=>{ buildDashboard(); showScreen("dash"); });
