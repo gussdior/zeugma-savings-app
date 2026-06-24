@@ -669,6 +669,35 @@ function calc(s, q){
   const totalSave = regGross - packageTotal;
   return {rate,hasPromo,base,regGross,packageTotal,perSession,packageSave,promoSave,totalSave};
 }
+function invoiceForService(s, q){
+  q = clampSess(q);
+  const c = calc(s, q);
+  return {
+    items: [{
+      name: s.name,
+      subtitle: q + (q===1?" session":" sessions") + " package" + (c.hasPromo?" · promo price":""),
+      qty: q,
+      perSession: c.perSession,
+      amount: c.packageTotal
+    }],
+    totals: { regGross: c.regGross, totalSave: c.totalSave, packageTotal: c.packageTotal }
+  };
+}
+function invoiceForBundle(){
+  const items = [];
+  let regGross = 0, totalSave = 0, packageTotal = 0;
+  bundle.forEach(k=>{
+    const s = services.find(x=>x.key===k); if(!s) return;
+    const q = clampSess(s.maxSessions), c = calc(s, q);
+    items.push({
+      name: s.name,
+      subtitle: q + (q===1?" session":" sessions") + (c.hasPromo?" · promo price":""),
+      qty: q, perSession: c.perSession, amount: c.packageTotal
+    });
+    regGross += c.regGross; totalSave += c.totalSave; packageTotal += c.packageTotal;
+  });
+  return { items, totals:{ regGross, totalSave, packageTotal } };
+}
 
 // ---- LEFT RAIL ----
 function buildLeft(s){
