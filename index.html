@@ -96,6 +96,10 @@ body::before{
 .open-btn{font-family:inherit; font-size:14px; font-weight:600; padding:13px 20px; border:none; border-radius:12px; background:var(--brown); color:#fff; cursor:pointer; transition:transform .14s, background .2s; display:flex; align-items:center; gap:8px;}
 .open-btn:hover{background:#4a4019;}
 .open-btn:active{transform:scale(.96);}
+.row-cta{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.invoice-btn{font-family:inherit; font-size:14px; font-weight:600; padding:11px 18px; border:1px solid var(--line); border-radius:30px; background:#fff; color:var(--brown); cursor:pointer; white-space:nowrap; box-shadow:var(--shadow-sm); transition:background .2s, transform .12s;}
+.invoice-btn:hover{background:var(--cream);}
+.invoice-btn:active{transform:scale(.97);}
 
 /* ---------- MODAL ---------- */
 .modal-back{position:fixed; inset:0; z-index:500; background:rgba(40,33,12,.5); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:24px;}
@@ -401,7 +405,7 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
     <div class="csave"><div class="l">You save</div><div class="v" id="bCtaSave">$0</div><div class="s" id="bCtaPkg"></div></div>
     <div class="cta-wrap"><button class="cta-btn" id="bCtaBtn">Reserve this package
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-    </button><div class="note">Lock in your savings today.</div></div>
+    </button><button class="invoice-btn" id="bInvoiceBtn" type="button" style="background:rgba(255,255,255,.1); color:#efe7d2; border-color:#6b5a22;">Send invoice</button><div class="note">Lock in your savings today.</div></div>
   </div>
 </div>
 
@@ -439,6 +443,33 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
     <div class="modal-actions">
       <button class="btn btn-ghost" id="tierCancel">Cancel</button>
       <button class="btn btn-primary" id="tierSave">Save discounts</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ INVOICE FORM ============ -->
+<div class="modal-back" id="invoiceBack">
+  <div class="modal">
+    <h2>Send invoice</h2>
+    <div class="sub">Fill in the client's details, then make the PDF and email it from your iPad.</div>
+    <div class="field"><label>Client name</label><input type="text" id="invName" placeholder="e.g. Jane Doe"></div>
+    <div class="field-row">
+      <div class="field"><label>Client email</label><input type="email" id="invEmail" inputmode="email" placeholder="jane@email.com"></div>
+      <div class="field"><label>Client phone (optional)</label><input type="tel" id="invPhone" inputmode="tel" placeholder="(305) 555 0123"></div>
+    </div>
+    <div class="field" id="invSessWrap">
+      <label>Sessions</label>
+      <div class="stepper">
+        <button class="step" id="invSessMinus" type="button">&#8722;</button>
+        <span class="sess-val" id="invSessVal">6</span>
+        <button class="step" id="invSessPlus" type="button">+</button>
+      </div>
+    </div>
+    <div class="sub" id="invPreview" style="margin:4px 0 0; color:var(--brown); font-weight:600;"></div>
+    <div class="err" id="invErr"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="invCancel" type="button">Cancel</button>
+      <button class="btn btn-primary" id="invMake" type="button">Make PDF &amp; email</button>
     </div>
   </div>
 </div>
@@ -585,9 +616,12 @@ function buildDashboard(){
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
       </div>
-      <button class="open-btn" data-open="${s.key}">Open for client
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
+      <div class="row-cta">
+        <button class="invoice-btn" data-invoice="${s.key}">Send invoice</button>
+        <button class="open-btn" data-open="${s.key}">Open for client
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
     </div>`).join("");
 
   wrap.querySelectorAll("input").forEach(inp=>{
@@ -605,6 +639,7 @@ function buildDashboard(){
   wrap.querySelectorAll(".step").forEach(b=> b.addEventListener("click",()=>stepSessions(b.dataset.key, +b.dataset.step)) );
   wrap.querySelectorAll("[data-toggle]").forEach(b=> b.addEventListener("click",()=>togglePromo(b.dataset.toggle)) );
   wrap.querySelectorAll(".open-btn").forEach(b=> b.addEventListener("click",()=>openClient(b.dataset.open)) );
+  wrap.querySelectorAll("[data-invoice]").forEach(b=> b.addEventListener("click",()=>openInvoiceForm({type:"service", key:b.dataset.invoice})) );
   wrap.querySelectorAll("[data-edit]").forEach(b=> b.addEventListener("click",()=>openModal(b.dataset.edit)) );
   wrap.querySelectorAll("[data-remove]").forEach(b=> b.addEventListener("click",()=>removeService(b.dataset.remove)) );
   wrap.querySelectorAll(".bundle-check").forEach(b=> b.addEventListener("click",()=>toggleBundle(b.dataset.bk)) );
@@ -991,6 +1026,76 @@ function buildBundleClient(){
 document.getElementById("bundleOpen").addEventListener("click",openBundle);
 document.getElementById("bBack").addEventListener("click",()=>{ buildDashboard(); showScreen("dash"); });
 document.getElementById("bCtaBtn").addEventListener("click",e=>{ const b=e.currentTarget; b.style.transform="scale(.97)"; setTimeout(()=>b.style.transform="",140); });
+
+// ---- INVOICE FORM ----
+let invoiceCtx = null;
+const invEmailOk = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((e||"").trim());
+
+function invoiceData(){
+  const built = invoiceCtx.type === "bundle"
+    ? invoiceForBundle()
+    : invoiceForService(services.find(s=>s.key===invoiceCtx.key), invoiceCtx.sessions);
+  return {
+    client:{ name:document.getElementById("invName").value.trim(),
+             email:document.getElementById("invEmail").value.trim(),
+             phone:document.getElementById("invPhone").value.trim() },
+    items: built.items, totals: built.totals
+  };
+}
+function refreshInvoicePreview(){
+  const d = invoiceData();
+  document.getElementById("invPreview").textContent =
+    "Package total " + usd(d.totals.packageTotal) + " · you save " + usd(d.totals.totalSave);
+}
+function openInvoiceForm(ctx){
+  invoiceCtx = ctx;
+  if(ctx.type === "service"){
+    const s = services.find(x=>x.key===ctx.key);
+    invoiceCtx.sessions = clampSess(s.maxSessions);
+    document.getElementById("invSessWrap").style.display = "";
+    document.getElementById("invSessVal").textContent = invoiceCtx.sessions;
+  } else {
+    document.getElementById("invSessWrap").style.display = "none";
+  }
+  document.getElementById("invName").value = "";
+  document.getElementById("invEmail").value = "";
+  document.getElementById("invPhone").value = "";
+  document.getElementById("invErr").textContent = "";
+  invoiceCtx.invoiceNo = null;
+  refreshInvoicePreview();
+  document.getElementById("invoiceBack").classList.add("show");
+}
+function closeInvoiceForm(){
+  document.getElementById("invoiceBack").classList.remove("show");
+  invoiceCtx = null;
+}
+function invStep(d){
+  if(!invoiceCtx || invoiceCtx.type !== "service") return;
+  invoiceCtx.sessions = clampSess(invoiceCtx.sessions + d);
+  document.getElementById("invSessVal").textContent = invoiceCtx.sessions;
+  refreshInvoicePreview();
+}
+function makeInvoicePDF(){
+  const name = document.getElementById("invName").value.trim();
+  const email = document.getElementById("invEmail").value.trim();
+  const err = document.getElementById("invErr");
+  if(!name){ err.textContent = "Please enter the client's name."; return; }
+  if(!invEmailOk(email)){ err.textContent = "Please enter a valid client email."; return; }
+  err.textContent = "";
+  if(!invoiceCtx.invoiceNo) invoiceCtx.invoiceNo = nextInvoiceNo();
+  const d = invoiceData();
+  buildInvoice({ invoiceNo:invoiceCtx.invoiceNo, dateStr:invoiceDateStr(), client:d.client, items:d.items, totals:d.totals });
+  closeInvoiceForm();
+  setTimeout(()=>window.print(), 60);
+}
+
+document.getElementById("invCancel").addEventListener("click", closeInvoiceForm);
+document.getElementById("invoiceBack").addEventListener("click", e=>{ if(e.target.id==="invoiceBack") closeInvoiceForm(); });
+document.getElementById("invMake").addEventListener("click", makeInvoicePDF);
+document.getElementById("invSessMinus").addEventListener("click", ()=>invStep(-1));
+document.getElementById("invSessPlus").addEventListener("click", ()=>invStep(1));
+["invName","invEmail","invPhone"].forEach(id=> document.getElementById(id).addEventListener("input", ()=>{ if(document.getElementById("invErr").textContent) document.getElementById("invErr").textContent=""; }));
+document.getElementById("bInvoiceBtn").addEventListener("click", ()=>openInvoiceForm({type:"bundle"}));
 
 buildDashboard();
 </script>
