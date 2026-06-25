@@ -600,6 +600,60 @@ function loadServices(){
   const s = seed(); saveServices(s); return s;
 }
 function saveServices(svcs){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(svcs)); }catch(e){} }
+
+const CLIENTS_KEY = "zeugma_clients";
+function loadClients(){ try{ const a=JSON.parse(localStorage.getItem(CLIENTS_KEY)||"null"); if(Array.isArray(a)) return a; }catch(e){} return []; }
+function saveClients(arr){ try{ localStorage.setItem(CLIENTS_KEY, JSON.stringify(arr)); }catch(e){} }
+function clientIdFor(email){ return (email||"").trim().toLowerCase(); }
+function findClient(email){ const id=clientIdFor(email); return loadClients().find(c=>c.id===id); }
+function pkgLeft(p){ return Math.max(0, (p.total||0) - (p.used||0)); }
+function clientActivePkgs(c){ return (c.packages||[]).filter(p=>pkgLeft(p)>0); }
+function upsertClientFromInvoice(client, items){
+  const id = clientIdFor(client.email);
+  if(!id) return null;
+  const clients = loadClients();
+  let c = clients.find(x=>x.id===id);
+  if(!c){ c={ id, name:client.name||"", email:client.email||"", phone:client.phone||"", nextAppt:null, packages:[] }; clients.push(c); }
+  else { if(client.name) c.name=client.name; if(client.phone) c.phone=client.phone; }
+  (items||[]).forEach(it=>{
+    const active = c.packages.find(p=>p.name===it.name && pkgLeft(p)>0);
+    if(active){ active.total += it.qty; }
+    else { c.packages.push({ name:it.name, total:it.qty, used:0 }); }
+  });
+  saveClients(clients);
+  return c;
+}
+const WD = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const MO = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function formatApptDate(iso){
+  if(!iso) return "";
+  const p=String(iso).split("-"); if(p.length!==3) return "";
+  const d=new Date(+p[0], +p[1]-1, +p[2]);
+  if(isNaN(d)) return "";
+  return WD[d.getDay()]+", "+MO[d.getMonth()]+" "+d.getDate()+", "+d.getFullYear();
+}
+function clientUpdateBody(c){
+  const first=(c.name||"there").trim().split(/\s+/)[0];
+  const lines=[];
+  lines.push("Hi "+first+",");
+  lines.push("");
+  lines.push("We hope you're feeling wonderful. Here is a friendly check-in on your treatment packages with us:");
+  lines.push("");
+  clientActivePkgs(c).forEach(p=>{ lines.push("- "+p.name+": "+pkgLeft(p)+" of "+p.total+" sessions left"); });
+  lines.push("");
+  const appt=formatApptDate(c.nextAppt);
+  if(appt){ lines.push("We have you booked for your next visit on "+appt+", and we cannot wait to see you."); lines.push(""); }
+  lines.push("If you have any questions, or you would like to move things around, just give us a call. We are always happy to help.");
+  lines.push("");
+  lines.push("Warmly,");
+  lines.push("The Zeugma MedSpa team");
+  lines.push(BIZ.phone+" · "+BIZ.web);
+  return lines.join("\n");
+}
+function clientUpdateMailto(c){
+  const subject="A little update on your Zeugma treatments";
+  return "mailto:"+(c.email||"")+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(clientUpdateBody(c));
+}
 function slugify(name){
   let base = name.toLowerCase().replace(/[^a-z0-9]+/g,"").slice(0,16) || "svc";
   let key = base, i = 2;
