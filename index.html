@@ -315,6 +315,30 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
   #invoiceSheet{ display:block !important; }
   #rotate{ display:none !important; }
 }
+
+/* ---------- CLIENTS ---------- */
+.cl-search{display:flex; align-items:center; gap:9px; background:#fff; border:1px solid #d8cdb6; border-radius:11px; padding:10px 14px; margin-bottom:18px; color:var(--muted); max-width:520px;}
+.cl-search input{border:none; background:transparent; font-family:inherit; font-size:15px; color:var(--brown); width:100%; outline:none;}
+.cl-card{background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-bottom:12px; display:flex; align-items:center; gap:16px; cursor:pointer; box-shadow:var(--shadow-sm); transition:transform .12s;}
+.cl-card:active{transform:scale(.995);}
+.cl-card .cl-nm{flex:1; min-width:0;}
+.cl-card .cl-nm .n{font-size:18px; font-weight:600; color:var(--brown);}
+.cl-card .cl-nm .e{font-size:12px; color:var(--muted); margin-top:2px;}
+.cl-card .cl-meta{text-align:right; flex-shrink:0;}
+.cl-card .cl-meta .big{font-size:20px; font-weight:800; color:var(--coral); line-height:1;}
+.cl-card .cl-meta .lbl{font-size:11px; color:var(--muted); margin-top:2px;}
+.cl-empty{color:var(--muted); font-size:14px; padding:20px 2px;}
+.clp-pkg{padding:14px 0; border-bottom:1px solid var(--line);}
+.clp-pkg:last-child{border-bottom:none;}
+.clp-row{display:flex; align-items:center; gap:12px;}
+.clp-row .clp-nm{flex:1; min-width:0;}
+.clp-row .clp-nm .n{font-size:15px; font-weight:600; color:var(--brown);}
+.clp-row .clp-nm .l{font-size:12px; font-weight:600; color:var(--sage-ink); margin-top:3px;}
+.clp-row .clp-nm .l.done{color:var(--muted);}
+.clp-bar{height:7px; background:#eadfca; border-radius:6px; overflow:hidden; margin-top:9px;}
+.clp-bar > div{height:100%; background:var(--coral);}
+.clp-use{font-family:inherit; font-size:12px; font-weight:600; color:var(--brown); background:var(--cream); border:1px solid var(--line); border-radius:20px; padding:8px 14px; cursor:pointer; white-space:nowrap;}
+.clp-use:disabled{opacity:.45; cursor:default;}
 </style>
 </head>
 <body>
@@ -331,6 +355,10 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
   <div class="dash-head">
     <div class="brand"><div class="b">ZEUGMA SPA</div><div class="s">PRICING DASHBOARD</div></div>
     <div style="display:flex; gap:10px;">
+      <button class="add-btn" id="clientsBtn" title="Client profiles and sessions left">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+        Clients
+      </button>
       <button class="add-btn" id="settingsBtn" title="Edit package discount percentages">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>
         Discounts
@@ -350,6 +378,26 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
     <button class="bb-btn" id="bundleOpen">View bundle for client
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
     </button>
+  </div>
+</div>
+
+<!-- ============ CLIENTS ============ -->
+<div class="screen" id="clients">
+  <div class="dash-head">
+    <div class="brand"><div class="b">CLIENTS</div><div class="s">SESSIONS &amp; FOLLOW-UP</div></div>
+    <div style="display:flex; gap:10px;">
+      <button class="add-btn" id="backupBtn" title="Save a backup file of all your data">Back up</button>
+      <button class="add-btn" id="restoreBtn" title="Restore from a backup file">Restore</button>
+      <button class="add-btn" id="clientsBack">Done</button>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="cl-search">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input type="text" id="clSearch" placeholder="Search client by name">
+    </div>
+    <div id="clList"></div>
+    <input type="file" id="restoreFile" accept="application/json" style="display:none">
   </div>
 </div>
 
@@ -498,6 +546,36 @@ h1.svc{font-family:var(--serif); font-size:clamp(44px,5.6vw,76px); font-weight:7
     <div class="modal-actions">
       <button class="btn btn-ghost" id="invCancel" type="button">Cancel</button>
       <button class="btn btn-primary" id="invMake" type="button">Make PDF &amp; email</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CLIENT PROFILE ============ -->
+<div class="modal-back" id="clientBack">
+  <div class="modal">
+    <h2 id="clpName">Client</h2>
+    <div class="sub" id="clpContact"></div>
+    <div id="clpPkgs"></div>
+    <div class="field" style="margin-top:6px;">
+      <label>Next appointment (you enter this)</label>
+      <input type="date" id="clpAppt">
+      <div class="hint" id="clpApptShown"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="clpClose" type="button">Close</button>
+      <button class="btn btn-primary" id="clpEmail" type="button">Email sessions update</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SESSION CONFIRM ============ -->
+<div class="modal-back" id="sessConfirmBack" style="z-index:600;">
+  <div class="modal" style="max-width:360px; text-align:center;">
+    <h2>Has this session been done?</h2>
+    <div class="sub" id="sessConfirmMsg" style="margin-bottom:22px;"></div>
+    <div class="modal-actions" style="justify-content:center;">
+      <button class="btn btn-ghost" id="sessConfirmNo" type="button">Not yet</button>
+      <button class="btn btn-primary" id="sessConfirmYes" type="button">Yes, mark it used</button>
     </div>
   </div>
 </div>
@@ -1240,6 +1318,107 @@ document.getElementById("invSessMinus").addEventListener("click", ()=>invStep(-1
 document.getElementById("invSessPlus").addEventListener("click", ()=>invStep(1));
 ["invName","invEmail","invPhone"].forEach(id=> document.getElementById(id).addEventListener("input", ()=>{ if(document.getElementById("invErr").textContent) document.getElementById("invErr").textContent=""; }));
 document.getElementById("bInvoiceBtn").addEventListener("click", ()=>openInvoiceForm({type:"bundle"}));
+
+// ---- CLIENTS SCREEN ----
+function openClients(){ buildClientsList(""); document.getElementById("clSearch").value=""; showScreen("clients"); }
+function buildClientsList(filter){
+  const f=(filter||"").trim().toLowerCase();
+  const list=loadClients().filter(c=>!f || (c.name||"").toLowerCase().includes(f));
+  const wrap=document.getElementById("clList");
+  if(!list.length){ wrap.innerHTML='<div class="cl-empty">No clients yet. Profiles are created when you send an invoice.</div>'; return; }
+  wrap.innerHTML=list.map(c=>{
+    const left=clientActivePkgs(c).reduce((a,p)=>a+pkgLeft(p),0);
+    const n=clientActivePkgs(c).length;
+    return `<div class="cl-card" data-cid="${esc(c.id)}">
+      <div class="cl-nm"><div class="n">${esc(c.name||c.email)}</div><div class="e">${esc(c.email)}${c.phone?(" · "+esc(c.phone)):""}</div></div>
+      <div class="cl-meta"><div class="big">${left}</div><div class="lbl">${left===1?"session":"sessions"} left · ${n} active</div></div>
+    </div>`;
+  }).join("");
+  wrap.querySelectorAll(".cl-card").forEach(el=>el.addEventListener("click",()=>openClientProfile(el.dataset.cid)));
+}
+document.getElementById("clientsBtn").addEventListener("click", openClients);
+document.getElementById("clientsBack").addEventListener("click", ()=>{ buildDashboard(); showScreen("dash"); });
+document.getElementById("clSearch").addEventListener("input", e=>buildClientsList(e.target.value));
+
+// ---- CLIENT PROFILE ----
+let clpId = null;
+function currentClient(){ return loadClients().find(c=>c.id===clpId); }
+function openClientProfile(id){
+  clpId=id; const c=currentClient(); if(!c) return;
+  renderClientProfile();
+  document.getElementById("clientBack").classList.add("show");
+}
+function renderClientProfile(){
+  const c=currentClient(); if(!c) return;
+  document.getElementById("clpName").textContent=c.name||c.email;
+  document.getElementById("clpContact").textContent=c.email+(c.phone?(" · "+c.phone):"");
+  document.getElementById("clpPkgs").innerHTML=(c.packages||[]).map((p,i)=>{
+    const left=pkgLeft(p), done=left===0, pct=p.total?Math.round((p.used/p.total)*100):0;
+    return `<div class="clp-pkg">
+      <div class="clp-row">
+        <div class="clp-nm"><div class="n">${esc(p.name)}</div><div class="l ${done?"done":""}">${done?"Complete":(left+" of "+p.total+" sessions left")}</div></div>
+        <button class="clp-use" data-use="${i}" ${done?"disabled":""}>&#8722; Mark session used</button>
+      </div>
+      <div class="clp-bar"><div style="width:${pct}%"></div></div>
+    </div>`;
+  }).join("");
+  document.getElementById("clpPkgs").querySelectorAll("[data-use]").forEach(b=>b.addEventListener("click",()=>askSessionUsed(+b.dataset.use)));
+  document.getElementById("clpAppt").value=c.nextAppt||"";
+  document.getElementById("clpApptShown").textContent=c.nextAppt?formatApptDate(c.nextAppt):"No next appointment set.";
+}
+let pendingUseIdx=null;
+function askSessionUsed(idx){
+  const c=currentClient(); if(!c) return; const p=c.packages[idx]; if(!p||pkgLeft(p)<=0) return;
+  pendingUseIdx=idx;
+  document.getElementById("sessConfirmMsg").innerHTML="Mark one <b>"+esc(p.name)+"</b> session as used for <b>"+esc(c.name||c.email)+"</b>. Sessions left will go from <b>"+pkgLeft(p)+"</b> to <b>"+(pkgLeft(p)-1)+"</b>.";
+  document.getElementById("sessConfirmBack").classList.add("show");
+}
+function confirmSessionUsed(){
+  const idx=pendingUseIdx;
+  if(idx!=null){
+    const all=loadClients(); const cc=all.find(x=>x.id===clpId);
+    if(cc && cc.packages[idx] && pkgLeft(cc.packages[idx])>0){ cc.packages[idx].used++; saveClients(all); renderClientProfile(); }
+  }
+  pendingUseIdx=null;
+  document.getElementById("sessConfirmBack").classList.remove("show");
+}
+function setNextAppt(iso){
+  const all=loadClients(); const cc=all.find(x=>x.id===clpId); if(!cc) return;
+  cc.nextAppt=iso||null; saveClients(all);
+  document.getElementById("clpApptShown").textContent=iso?formatApptDate(iso):"No next appointment set.";
+}
+function closeClientProfile(){ document.getElementById("clientBack").classList.remove("show"); buildClientsList(document.getElementById("clSearch").value); }
+document.getElementById("clpClose").addEventListener("click", closeClientProfile);
+document.getElementById("clientBack").addEventListener("click",e=>{ if(e.target.id==="clientBack") closeClientProfile(); });
+document.getElementById("clpAppt").addEventListener("change",e=>setNextAppt(e.target.value));
+document.getElementById("clpEmail").addEventListener("click",()=>{ const c=currentClient(); if(c) location.href=clientUpdateMailto(c); });
+document.getElementById("sessConfirmNo").addEventListener("click",()=>{ pendingUseIdx=null; document.getElementById("sessConfirmBack").classList.remove("show"); });
+document.getElementById("sessConfirmYes").addEventListener("click",confirmSessionUsed);
+
+// ---- BACKUP / RESTORE ----
+const BACKUP_KEYS = [STORE_KEY, TIER_KEY, INV_KEY, CLIENTS_KEY];
+function invBackupStamp(){ const d=new Date(); const m=String(d.getMonth()+1).padStart(2,"0"); const day=String(d.getDate()).padStart(2,"0"); return ""+d.getFullYear()+"-"+m+"-"+day; }
+function backupData(){
+  const data={}; BACKUP_KEYS.forEach(k=>{ const v=localStorage.getItem(k); if(v!=null) data[k]=v; });
+  const blob=new Blob([JSON.stringify({ app:"zeugma-savings", data }, null, 2)], {type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download="zeugma-backup-"+invBackupStamp()+".json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url), 1000);
+}
+function restoreData(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    let parsed; try{ parsed=JSON.parse(reader.result); }catch(e){ alert("That file could not be read as a backup."); return; }
+    const data=parsed && parsed.data; if(!data || typeof data!=="object"){ alert("That file is not a Zeugma backup."); return; }
+    if(!confirm("Restore will replace all current data on this iPad with the backup. Continue?")) return;
+    BACKUP_KEYS.forEach(k=>{ if(data[k]!=null) localStorage.setItem(k, data[k]); });
+    location.reload();
+  };
+  reader.readAsText(file);
+}
+document.getElementById("backupBtn").addEventListener("click", backupData);
+document.getElementById("restoreBtn").addEventListener("click", ()=>document.getElementById("restoreFile").click());
+document.getElementById("restoreFile").addEventListener("change", e=>{ if(e.target.files[0]) restoreData(e.target.files[0]); e.target.value=""; });
 
 buildDashboard();
 </script>
