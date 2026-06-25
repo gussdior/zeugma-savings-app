@@ -1227,6 +1227,7 @@ function makeInvoicePDF(){
   err.textContent = "";
   if(!invoiceCtx.invoiceNo) invoiceCtx.invoiceNo = nextInvoiceNo();
   const d = invoiceData();
+  upsertClientFromInvoice(d.client, d.items);
   buildInvoice({ invoiceNo:invoiceCtx.invoiceNo, dateStr:invoiceDateStr(), client:d.client, items:d.items, totals:d.totals });
   closeInvoiceForm();
   setTimeout(()=>window.print(), 60);
