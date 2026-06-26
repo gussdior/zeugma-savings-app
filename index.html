@@ -670,12 +670,12 @@ const SUPA_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs
 const CLOUD_ENABLED = /^https:\/\/.+\.supabase\.co/.test(SUPA_URL);
 const SUPA_TOKENS_KEY = "zeugma_supa_tokens";
 const SYNCED_AT_KEY = "zeugma_synced_at";
-const MIN_SESS = 3, MAX_SESS = 12;
+const MIN_SESS = 1, MAX_SESS = 12;
 
 const usd = n => "$" + Math.round(n).toLocaleString("en-US");
 const comma = n => Math.round(n).toLocaleString("en-US");
 const num = v => { const n = parseInt(v,10); return (isNaN(n)||n<0) ? 0 : n; };
-const clampSess = n => Math.min(MAX_SESS, Math.max(MIN_SESS, n||6));
+const clampSess = n => { n = parseInt(n, 10); if (isNaN(n)) n = 6; return Math.min(MAX_SESS, Math.max(MIN_SESS, n)); };
 const clampPct = v => Math.min(90, Math.max(0, num(v)));
 function loadTiers(){ try{ const t=JSON.parse(localStorage.getItem(TIER_KEY)||"null"); if(t && t.mid!=null && t.high!=null) return {mid:clampPct(t.mid), high:clampPct(t.high)}; }catch(e){} return {mid:10, high:15}; }
 function saveTiers(){ try{ localStorage.setItem(TIER_KEY, JSON.stringify(TIERS)); }catch(e){} markDirty(); }
@@ -723,7 +723,7 @@ function normalize(s){
     key: s.key || slugify(s.name||"service"),
     name: (s.name||"Service").toString().trim(),
     reg, promo, promoActive,
-    maxSessions: clampSess(num(s.maxSessions)),
+    maxSessions: clampSess(num(s.maxSessions) || 6),
     lede: (s.lede||"").toString(),
     benefits: Array.isArray(s.benefits) ? s.benefits.filter(b=>b&&b.trim()).slice(0,3) : []
   };
